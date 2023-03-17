@@ -31,33 +31,45 @@ $$
   \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
 $$
 
-Let's generate $n=10$ observations.
+Let's generate $n=100$ observations.
 ```{r}
-n <- 3000
+n <- 100
 rate <- val(1)
 data <- rexp(n,rate$data)
-# print(data)
+score <- n / rate$data - sum(data)
+head(data)
 
-(loglike.test <- n * log(rate$data) - rate$data * sum(data))
-(score.test <- n / rate$data - sum(data))
-
-loglike_exp_rate <- function(rate, data)
-{
-  length(data) * log(rate) - rate * sum(data)  
-}
-
-(loglik <- loglike_exp_rate(rate, data))
+cat("loglike =", n * log(rate$data) - rate$data * sum(data), "\n")
+cat("rate =", rate$data, "\n")
+cat("score =", score, "\n")
 ```
 
-
+We see that at $\hat\lambda = `r rate$data`$, the score is $`r score`$.
+Let's use \code{femtograd} to construct the log-likelihood function.
 ```{r}
-backward(loglik)
-loglik
-rate
+loglike_exp <- function(rate, data)
+  val(length(data)) * log(rate) - rate * sum(data)  
 
-rate <- val(1/mean(data))
-loglik <- loglike_exp_rate(rate, data)
+loglik <- loglike_exp(rate, data)
+zero_grad(loglik)
 backward(loglik)
-loglik
-rate
+cat("loglike =", loglik$data, "\n")
+cat("rate = ", rate$data, "\n")
+cat("dloglik/drate =", rate$grad, "\n")
 ```
+
+We see that the score is $`r rate$grad`$, which agreeds with the previous
+calculation.
+Now, let's set $\hat\lambda$ to $1/\bar{t}$, the MLE.
+```{r}
+rate <- val(1/mean(data))
+loglik <- loglike_exp(rate, data)
+zero_grad(loglik)
+backward(loglik)
+cat("loglike =", loglik$data, "\n")
+cat("rate = ", rate$data, "\n")
+cat("dloglik/drate =", rate$grad, "\n")
+```
+
+As expected, we see that the score is $`r rate$grad`$ (zero). Also, the
+log-likelihood is larger (should be maximum) at this rate value.
