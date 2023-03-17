@@ -164,7 +164,7 @@ sqrt.value <- function(x)
 `-.value` <- function(x, y)
 {
   y <- if (is_value(y)) y else val(y)
-  out <- val(x$data - y$data, list(x, y), '-')
+  out <- value$new(x$data - y$data, list(x, y), '-')
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + out$grad
