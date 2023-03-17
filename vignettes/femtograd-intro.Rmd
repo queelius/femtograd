@@ -1,0 +1,30 @@
+---
+title: "femtograd-intro"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{femtograd-intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(femtograd)
+```
+
+
+```{r}
+xs <- list(length=10)
+for (i in 1:10)
+  xs[[i]] <- val(i)
+out <- val(4)*log(val(3)*sum_values(xs))
+
+backward(out)
+out
+```
