@@ -45,7 +45,8 @@ cat("score =", score, "\n")
 ```
 
 We see that at $\hat\lambda = `r rate$data`$, the score is $`r score`$.
-Let's use \code{femtograd} to construct the log-likelihood function.
+Let's use [`femtograd` package](https://github.com/queelius/femtograd)  to
+construct the log-likelihood function.
 ```{r}
 loglike_exp <- function(rate, data)
   val(length(data)) * log(rate) - rate * sum(data)  
@@ -73,3 +74,27 @@ cat("dloglik/drate =", rate$grad, "\n")
 
 As expected, we see that the score is $`r rate$grad`$ (zero). Also, the
 log-likelihood is larger (should be maximum) at this rate value.
+
+Next, we show how to find the MLE using a simple iteration.
+First, we set $\hat\lambda$ to $5$, a terrible estimate.
+```{r}
+rate <- val(5)
+```
+
+Now we loop 20 times.
+```{r}
+for (i in 1:20)
+{
+  loglik <- loglike_exp(rate, data)
+  zero_grad(loglik)
+  backward(loglik)
+  rate <- val(rate$data + 0.01 * rate$grad)
+  cat("rate =", rate$data, "\n")
+}
+```
+
+Did it converge to the MLE?
+```{r}
+print(abs(1/mean(data) - rate$data) < 1e-3)
+```
+It appears so.
