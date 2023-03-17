@@ -80,40 +80,60 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">femtograd</span><span class="op">)</span></span></code></pre></div>
+<p>Let’s create a simple loglikelihood function for the exponential
+distribution paramterized by <span class="math inline">\(\lambda\)</span> (failure rate).</p>
+<p>We have <span class="math display">\[
+  f_{T_i}(t_i | \lambda) = \lambda \exp(-\lambda t_i).
+\]</span> So, the loglikelihood function is just <span class="math display">\[
+  \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
+\]</span></p>
+<p>Let’s generate <span class="math inline">\(n=100\)</span>
+observations.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>length<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span>  <span class="va">xs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/val.html">val</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/val.html">val</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="../reference/val.html">val</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="../reference/sum_values.html">sum_values</a></span><span class="op">(</span><span class="va">xs</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/val.html">val</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">rate</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="va">score</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">/</span> <span class="va">rate</span><span class="op">$</span><span class="va">data</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.4976368 0.2127471 0.1826410 0.8555002 3.2928436 2.0156700</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/backward.html">backward</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
-<span><span class="va">out</span></span>
-<span><span class="co">#&gt;  value( data = 20.42378 , grad = 1 , op = * )</span></span>
-<span><span class="co">#&gt;    value( data = 4 , grad = 5.105945 , op =  )</span></span>
-<span><span class="co">#&gt;    value( data = 5.105945 , grad = 4 , op = log )</span></span>
-<span><span class="co">#&gt;      value( data = 165 , grad = 0.02424242 , op = * )</span></span>
-<span><span class="co">#&gt;        value( data = 3 , grad = 1.333333 , op =  )</span></span>
-<span><span class="co">#&gt;        value( data = 55 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;          value( data = 45 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;            value( data = 36 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;              value( data = 28 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                value( data = 21 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                  value( data = 15 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                    value( data = 10 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                      value( data = 6 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                        value( data = 3 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                          value( data = 1 , grad = 0.07272727 , op = + )</span></span>
-<span><span class="co">#&gt;                            value( data = 0 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                            value( data = 1 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                          value( data = 2 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                        value( data = 3 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                      value( data = 4 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                    value( data = 5 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                  value( data = 6 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;                value( data = 7 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;              value( data = 8 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;            value( data = 9 , grad = 0.07272727 , op =  )</span></span>
-<span><span class="co">#&gt;          value( data = 10 , grad = 0.07272727 , op =  )</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"loglike ="</span>, <span class="va">n</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">rate</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">-</span> <span class="va">rate</span><span class="op">$</span><span class="va">data</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; loglike = -105.1854</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"rate ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">data</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; rate = 1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"score ="</span>, <span class="va">score</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; score = -5.185387</span></span></code></pre></div>
+<p>We see that at <span class="math inline">\(\hat\lambda = 1\)</span>,
+the score is <span class="math inline">\(-5.1853865\)</span>. Let’s use
+to construct the log-likelihood function.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">loglike_exp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/val.html">val</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span> <span class="op">-</span> <span class="va">rate</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>  </span>
+<span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="fu">loglike_exp</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
+<span><span class="fu">zero_grad</span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/backward.html">backward</a></span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"loglike ="</span>, <span class="va">loglik</span><span class="op">$</span><span class="va">data</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; loglike = -105.1854</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"rate = "</span>, <span class="va">rate</span><span class="op">$</span><span class="va">data</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; rate =  1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"dloglik/drate ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">grad</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; dloglik/drate = -5.185387</span></span></code></pre></div>
+<p>We see that the score is <span class="math inline">\(-5.1853865\)</span>, which agreeds with the
+previous calculation. Now, let’s set <span class="math inline">\(\hat\lambda\)</span> to <span class="math inline">\(1/\bar{t}\)</span>, the MLE.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/val.html">val</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="fu">loglike_exp</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
+<span><span class="fu">zero_grad</span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/backward.html">backward</a></span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"loglike ="</span>, <span class="va">loglik</span><span class="op">$</span><span class="va">data</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; loglike = -105.0554</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"rate = "</span>, <span class="va">rate</span><span class="op">$</span><span class="va">data</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; rate =  0.9507024</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"dloglik/drate ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">grad</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; dloglik/drate = 0</span></span></code></pre></div>
+<p>As expected, we see that the score is <span class="math inline">\(0\)</span> (zero). Also, the log-likelihood is
+larger (should be maximum) at this rate value.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
