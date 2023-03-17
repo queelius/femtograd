@@ -127,3 +127,37 @@ print.value <- function(v, indent = "  ")
 #' @return TRUE if the object is of class value, FALSE otherwise
 #' @export
 is_value <- function(x) inherits(x, "value")
+
+
+#' Retrieve the value or data from an object
+#'
+#' @param x An object to retrieve the value or data from
+#'
+#' @return The value or data of the object if it is a value object, or the original object if it is not a value object
+#' @export
+retrieve <- function(x)
+{
+  UseMethod("retrieve")
+}
+
+#' Retrieve the value or data from a value object
+#'
+#' @param x A value object
+#'
+#' @return The value or data of the value object
+#' @export
+retrieve.value <- function(x)
+{
+  x$data
+}
+
+#' Retrieve the value or data from a non-value object
+#'
+#' @param x A non-value object
+#'
+#' @return The original object
+#' @export
+retrieve.default <- function(x)
+{
+  x
+}

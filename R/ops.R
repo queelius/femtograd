@@ -71,18 +71,25 @@
 
 #' Summation for a list of value objects
 #'
-#' @param values A list of value objects
+#' @param values A list of objects that can be added
 #'
 #' @return A new value object representing the sum of all input value objects
 #' @export
-sum_values <- function(values=NULL)
+sum_values <- function(values = NULL)
 {
-  if (is.null(values))
+  if (length(values) == 0)
     return(val(0))
-  if (is_value(values))
-    return(values)
-  Reduce(`+.value`, values, val(0))
+
+  s <- sum(sapply(values, retrieve))
+  out <- value$new(s, Filter(is_value, values), "sum_values")
+  out$backward_fn <- function()
+  {
+    for (child in out$prev)
+      child$grad <- child$grad + out$grad
+  }
+  out
 }
+
 
 #' Natural logarithm for value objects
 #'
@@ -116,8 +123,6 @@ exp.value <- function(x)
   out
 }
 
-
-
 #' Division for value objects
 #'
 #' @param x A value object (numerator)
@@ -127,8 +132,9 @@ exp.value <- function(x)
 #' @export
 `/.value` <- function(x, y)
 {
-  y <- ifelse(is_value(y), y, val(y))
-  out <- val(x$data / y$data, list(x, y), '/')
+  if (!is_value(y))
+    y <- val(y)
+  out <- value$new(x$data / y$data, list(x, y), '/')
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + (1 / y$data) * out$grad

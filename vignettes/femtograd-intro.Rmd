@@ -1,8 +1,8 @@
 ---
-title: "femtograd-intro"
+title: "femtograd: Introduction"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{femtograd-intro}
+  %\VignetteIndexEntry{femtograd: Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,10 +14,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+Load it like this:
 ```{r setup}
 library(femtograd)
 ```
-
 
 Let's create a simple loglikelihood function for the exponential distribution
 paramterized by $\lambda$ (failure rate).
@@ -49,11 +49,21 @@ Let's use [`femtograd` package](https://github.com/queelius/femtograd)  to
 construct the log-likelihood function.
 ```{r}
 loglike_exp <- function(rate, data)
-  val(length(data)) * log(rate) - rate * sum(data)  
+{
+  val(length(data)) * log(rate) - rate * sum_values(data)  
+}
+```
 
+Now we can use it:
+```{r grad_step}
 loglik <- loglike_exp(rate, data)
+loglik
 zero_grad(loglik)
 backward(loglik)
+```
+
+What's the result?
+```{r grad_step_output}
 cat("loglike =", loglik$data, "\n")
 cat("rate = ", rate$data, "\n")
 cat("dloglik/drate =", rate$grad, "\n")
@@ -98,3 +108,12 @@ Did it converge to the MLE?
 print(abs(1/mean(data) - rate$data) < 1e-3)
 ```
 It appears so.
+
+One thing we could do to improve the efficiency is to make the computational
+graph created be lazily computed such that whenever we change a node in
+the graph, whenever we retrieve the value at a node, the changes automatically
+propogate.
+
+We would have to rework the structure of `value`, though, and `femtograd`
+is not intended to be a heavy-duty library for automatic differentiation.
+If you need something more significant, consult another library.
