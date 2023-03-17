@@ -19,12 +19,45 @@ library(femtograd)
 ```
 
 
-```{r}
-xs <- list(length=10)
-for (i in 1:10)
-  xs[[i]] <- val(i)
-out <- val(4)*log(val(3)*sum_values(xs))
+Let's create a simple loglikelihood function for the exponential distribution
+paramterized by $\lambda$ (failure rate).
 
-backward(out)
-out
+We have
+$$
+  f_{T_i}(t_i | \lambda) = \lambda \exp(-\lambda t_i).
+$$
+So, the loglikelihood function is just
+$$
+  \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
+$$
+
+Let's generate $n=10$ observations.
+```{r}
+n <- 3000
+rate <- val(1)
+data <- rexp(n,rate$data)
+# print(data)
+
+(loglike.test <- n * log(rate$data) - rate$data * sum(data))
+(score.test <- n / rate$data - sum(data))
+
+loglike_exp_rate <- function(rate, data)
+{
+  length(data) * log(rate) - rate * sum(data)  
+}
+
+(loglik <- loglike_exp_rate(rate, data))
+```
+
+
+```{r}
+backward(loglik)
+loglik
+rate
+
+rate <- val(1/mean(data))
+loglik <- loglike_exp_rate(rate, data)
+backward(loglik)
+loglik
+rate
 ```
