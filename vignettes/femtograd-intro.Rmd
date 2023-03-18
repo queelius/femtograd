@@ -53,16 +53,9 @@ Let's solve for the MLE iteratively as a demonstration of how to use
 [`femtograd`](https://github.com/queelius/femtograd).
 First, we construct the log-likelihood function.
 ```{r loglike_exp}
-loglike_exp <- function(rate, data, penalty=1000)
+loglike_exp <- function(rate, data)
 {
-  if (rate$data <= 0)
-  {
-    return(val(penalty)*(-val(1) * rate)
-  }
-  else
-  {
-    return(log(rate)*length(data) - rate * sum(data))
-  }
+  return(log(rate)*length(data) - rate * sum(data))
 }
 ```
 
@@ -73,48 +66,37 @@ rate <- val(-100)
 
 Next, we find the MLE using a simple iteration (100 loops).
 ```{r}
-# we use a simple projection to make sure the rate parameter is greater than
-# zero
-rate
-pos_proj <- function(x) max(.1,x)
-for (i in 1:100)
+# to prevent taking too large of a step
+# gradients are a local feature, so we don't want to make too big of jumps
+grad_clip <- function(grad, max_norm = 1)
 {
-  loglik <- loglike_exp(rate, data, 100)
+  norm <- sqrt(sum(grad * grad))
+  if (norm > max_norm)
+    grad <- (max_norm / norm) * grad
+  grad
+}
+
+loglik <- loglike_exp(rate, data)
+for (i in 1:20)
+{
   zero_grad(loglik)
   backward(loglik)
 
-  rate$data <- rate$data + 0.01 * grad_clip(rate$grad,1)
+  rate$data <- rate$data + 0.01 * grad_clip(rate$grad)
   cat("loglike =", loglik$data, ", rate =", rate$data, ", score =", rate$grad, "\n")
 }
-loglik$data
 ```
 
 Did it converge to the MLE?
 ```{r}
-(converged <- (abs(mle.rate - rate$data) < 1e-4))
+(converged <- (abs(mle.rate - rate$data) < 1e-3))
 ```
 
-It's worth pointing out that we do not need to update `loglik` each step, we
-only need to zero out the gradient, since we don't use the value of
-`loglik` in gradient ascent, only the gradient, to update `rate` parameter.
-
-```{r}
-rate <- val(5)
-loglik <- loglike_exp(rate, data)
-for (i in 1:100)
-{
-  zero_grad(loglik)
-  backward(loglik)
-  rate$data <- pos_proj(rate$data + 0.01 * rate$grad)
-  
-}
-(converged <- abs(rate$data-mle.rate) < 1e-4)
-```
-Same result.
-
+It's worth pointing out that we did not update `loglik` in the loop, since
+we only needed the gradient (score) to do that particular gradient ascent.
 If, however, we had used the log-likelihood value at `rate`, for instance
-using a line search method to avoid having to specify a step size `0.01`,
-then we would need to update `loglik` each iteration.
+using a line search method to avoid having to specify a step size,
+then we would need to update `loglik` each time through the loop.
 
 ## Weibull distribution
 
@@ -130,57 +112,33 @@ loglike_weibull <- function(shape, scale, data)
   val(n) * log(shape/scale) + (shape - val(1)) * a - s
 }
 
-#loglike_weibull <- function(shape, scale, data)
-#{
-#  (log(scale) - log(shape)) * length(data) + shape * sum(data) -
-#    sum_values(lapply(data, function(x) (val(x) / scale)^shape))
-#}
-
 n <- 30
 true_shape <- 10
 true_scale <- 29
 data <- rweibull(n, true_shape, true_scale)
 
-grad_clip <- function(grad, max_norm) {
-  norm <- sqrt(sum(grad * grad))
-  if (norm > max_norm) {
-    grad <- (max_norm / norm) * grad
-  }
-  grad
-}
-
-shape <- val(10)
-scale <- val(29)
+shape <- val(5)
+scale <- val(5)
 shape.v <- 0
 scale.v <- 0
 beta <- .9
-lr <- 0.001
-for (i in 1:200)
+lr <- 0.01
+for (i in 1:20)
 {
   loglik <- loglike_weibull(shape, scale, data)
   zero_grad(loglik)
   backward(loglik)
+  
+  # we updated loglik so we can show the updated log-likelihood
   cat("loglike =", loglik$data, ", dl/dk =", shape$grad, ", dl/ds =", scale$grad, "\n")
-
 
   # update velocity with momentum
   shape.v <- beta * shape.v + grad_clip(shape$grad, max_norm=10)
   scale.v <- beta * scale.v + grad_clip(scale$grad, max_norm=10)
 
   # update parameters
-  shape$data <- pos_proj(shape$data + lr * shape.v)
-  scale$data <- pos_proj(scale$data + lr * scale.v)
+  shape$data <- shape$data + lr * shape.v
+  scale$data <- scale$data + lr * scale.v
 }
-options(digits=22)
-loglik <- loglike_weibull(shape, scale, data)
-shape$data
-scale$data
-loglik$data
-shape$grad
-scale$grad
+print(c(shape=shape$data, scale=scale$data, loglike=loglik$data))
 ```
-
-
-loglike = -74.32157334624426425762
-shape = 11.98993705700646117407
-scale = 29.89085405646882520614
