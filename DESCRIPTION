@@ -2,8 +2,9 @@ Package: femtograd
 Title: Like Micrograd, But Worse
 Version: 0.9000
 Authors@R: 
-    person("Alex", "Towell", , "queelius@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person("Alexander", "Towell", , "lex@metafunctor.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-6443-9897"))
+Maintainer: Alexander Towell <lex@metafunctor.com>
 Description: Let's you construct differentiable expressions using auto differentiation.
 License: GPL (>= 3)
 Encoding: UTF-8

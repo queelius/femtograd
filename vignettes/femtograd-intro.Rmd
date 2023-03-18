@@ -1,6 +1,8 @@
 ---
 title: "femtograd: Introduction"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{femtograd: Introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,10 +16,15 @@ knitr::opts_chunk$set(
 )
 ```
 
+Here's a quick demonstration of how to use the
+[`femtograd`](https://github.com/queelius/femtograd) R package.
+
 Load it like this:
 ```{r setup}
 library(femtograd)
 ```
+
+## Exponential distribution
 
 Let's create a simple loglikelihood function for the exponential distribution
 paramterized by $\lambda$ (failure rate).
@@ -31,89 +38,149 @@ $$
   \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
 $$
 
-Let's generate $n=100$ observations.
+Let's generate $n=30$ observations.
 ```{r}
-n <- 100
-rate <- val(1)
-data <- rexp(n,rate$data)
-score <- n / rate$data - sum(data)
+n <- 30
+true_rate <- 1
+data <- rexp(n,true_rate)
 head(data)
 
-cat("loglike =", n * log(rate$data) - rate$data * sum(data), "\n")
-cat("rate =", rate$data, "\n")
-cat("score =", score, "\n")
+(mle.rate <- abs(1/mean(data)))
 ```
 
-We see that at $\hat\lambda = `r rate$data`$, the score is $`r score`$.
-Let's use [`femtograd` package](https://github.com/queelius/femtograd)  to
-construct the log-likelihood function.
-```{r}
-loglike_exp <- function(rate, data)
+We see that the MLE $\hat\theta$ is `r mle.rate`.
+Let's solve for the MLE iteratively as a demonstration of how to use
+[`femtograd`](https://github.com/queelius/femtograd).
+First, we construct the log-likelihood function.
+```{r loglike_exp}
+loglike_exp <- function(rate, data, penalty=1000)
 {
-  val(length(data)) * log(rate) - rate * sum_values(data)  
+  if (rate$data <= 0)
+  {
+    return(val(penalty)*(-val(1) * rate)
+  }
+  else
+  {
+    return(log(rate)*length(data) - rate * sum(data))
+  }
 }
 ```
 
-Now we can use it:
-```{r grad_step}
-loglik <- loglike_exp(rate, data)
-loglik
-zero_grad(loglik)
-backward(loglik)
-```
-
-What's the result?
-```{r grad_step_output}
-cat("loglike =", loglik$data, "\n")
-cat("rate = ", rate$data, "\n")
-cat("dloglik/drate =", rate$grad, "\n")
-```
-
-We see that the score is $`r rate$grad`$, which agreeds with the previous
-calculation.
-Now, let's set $\hat\lambda$ to $1/\bar{t}$, the MLE.
+Initially, we guess that $\hat\lambda$ is $5$, which is a terrible estimate.
 ```{r}
-rate <- val(1/mean(data))
-loglik <- loglike_exp(rate, data)
-zero_grad(loglik)
-backward(loglik)
-cat("loglike =", loglik$data, "\n")
-cat("rate = ", rate$data, "\n")
-cat("dloglik/drate =", rate$grad, "\n")
+rate <- val(-100)
 ```
 
-As expected, we see that the score is $`r rate$grad`$ (zero). Also, the
-log-likelihood is larger (should be maximum) at this rate value.
-
-Next, we show how to find the MLE using a simple iteration.
-First, we set $\hat\lambda$ to $5$, a terrible estimate.
+Next, we find the MLE using a simple iteration (100 loops).
 ```{r}
-rate <- val(5)
-```
-
-Now we loop 20 times.
-```{r}
-for (i in 1:20)
+# we use a simple projection to make sure the rate parameter is greater than
+# zero
+rate
+pos_proj <- function(x) max(.1,x)
+for (i in 1:100)
 {
-  loglik <- loglike_exp(rate, data)
+  loglik <- loglike_exp(rate, data, 100)
   zero_grad(loglik)
   backward(loglik)
-  rate <- val(rate$data + 0.01 * rate$grad)
-  cat("rate =", rate$data, "\n")
+
+  rate$data <- rate$data + 0.01 * grad_clip(rate$grad,1)
+  cat("loglike =", loglik$data, ", rate =", rate$data, ", score =", rate$grad, "\n")
 }
+loglik$data
 ```
 
 Did it converge to the MLE?
 ```{r}
-print(abs(1/mean(data) - rate$data) < 1e-3)
+(converged <- (abs(mle.rate - rate$data) < 1e-4))
 ```
-It appears so.
 
-One thing we could do to improve the efficiency is to make the computational
-graph created be lazily computed such that whenever we change a node in
-the graph, whenever we retrieve the value at a node, the changes automatically
-propogate.
+It's worth pointing out that we do not need to update `loglik` each step, we
+only need to zero out the gradient, since we don't use the value of
+`loglik` in gradient ascent, only the gradient, to update `rate` parameter.
 
-We would have to rework the structure of `value`, though, and `femtograd`
-is not intended to be a heavy-duty library for automatic differentiation.
-If you need something more significant, consult another library.
+```{r}
+rate <- val(5)
+loglik <- loglike_exp(rate, data)
+for (i in 1:100)
+{
+  zero_grad(loglik)
+  backward(loglik)
+  rate$data <- pos_proj(rate$data + 0.01 * rate$grad)
+  
+}
+(converged <- abs(rate$data-mle.rate) < 1e-4)
+```
+Same result.
+
+If, however, we had used the log-likelihood value at `rate`, for instance
+using a line search method to avoid having to specify a step size `0.01`,
+then we would need to update `loglik` each iteration.
+
+## Weibull distribution
+
+Now let's do it for a slightly more complicated distribution, Weibull.
+
+```{r}
+loglike_weibull <- function(shape, scale, data)
+{
+  n <- length(data)
+  s <- sum_values(lapply(data, function(x) (val(x) / scale)^shape))
+  a <- sum_values(lapply(data, function(x) log(val(x) / scale)))
+  
+  val(n) * log(shape/scale) + (shape - val(1)) * a - s
+}
+
+#loglike_weibull <- function(shape, scale, data)
+#{
+#  (log(scale) - log(shape)) * length(data) + shape * sum(data) -
+#    sum_values(lapply(data, function(x) (val(x) / scale)^shape))
+#}
+
+n <- 30
+true_shape <- 10
+true_scale <- 29
+data <- rweibull(n, true_shape, true_scale)
+
+grad_clip <- function(grad, max_norm) {
+  norm <- sqrt(sum(grad * grad))
+  if (norm > max_norm) {
+    grad <- (max_norm / norm) * grad
+  }
+  grad
+}
+
+shape <- val(10)
+scale <- val(29)
+shape.v <- 0
+scale.v <- 0
+beta <- .9
+lr <- 0.001
+for (i in 1:200)
+{
+  loglik <- loglike_weibull(shape, scale, data)
+  zero_grad(loglik)
+  backward(loglik)
+  cat("loglike =", loglik$data, ", dl/dk =", shape$grad, ", dl/ds =", scale$grad, "\n")
+
+
+  # update velocity with momentum
+  shape.v <- beta * shape.v + grad_clip(shape$grad, max_norm=10)
+  scale.v <- beta * scale.v + grad_clip(scale$grad, max_norm=10)
+
+  # update parameters
+  shape$data <- pos_proj(shape$data + lr * shape.v)
+  scale$data <- pos_proj(scale$data + lr * scale.v)
+}
+options(digits=22)
+loglik <- loglike_weibull(shape, scale, data)
+shape$data
+scale$data
+loglik$data
+shape$grad
+scale$grad
+```
+
+
+loglike = -74.32157334624426425762
+shape = 11.98993705700646117407
+scale = 29.89085405646882520614
