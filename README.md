@@ -1,8 +1,6 @@
 femtograd
 ================
 
-  - [0.1 Exponential distribution](#01-exponential-distribution)
-
 Here’s a quick demonstration of how to use the
 [`femtograd`](https://github.com/queelius/femtograd) R package.
 
@@ -12,7 +10,7 @@ Load it like this:
 library(femtograd)
 ```
 
-## 0.1 Exponential distribution
+## Exponential distribution
 
 Let’s create a simple loglikelihood function for the exponential
 distribution paramterized by
@@ -41,15 +39,15 @@ n <- 30
 true_rate <- 7.3
 data <- rexp(n,true_rate)
 head(data)
-#> [1] 0.067121114 0.022125584 0.141639518 0.001758898 0.025229679 0.138780163
+#> [1] 0.05387135 0.07232008 0.12197395 0.03077618 0.17593061 0.09581282
 
 (mle.rate <- abs(1/mean(data)))
-#> [1] 10.50944
+#> [1] 8.687603
 ```
 
 We see that the MLE
 ![\\hat\\theta](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Chat%5Ctheta
-"\\hat\\theta") is 10.5094428. Let’s solve for the MLE iteratively as a
+"\\hat\\theta") is 8.6876029. Let’s solve for the MLE iteratively as a
 demonstration of how to use
 [`femtograd`](https://github.com/queelius/femtograd). First, we
 construct the log-likelihood function.
@@ -95,26 +93,26 @@ for (i in 1:200)
   if (i %% 10 == 0)
     cat("iteration", i, ", rate =", rate$data, ", rate.grad =", rate$grad, "\n")
 }
-#> iteration 10 , rate = 3 , rate.grad = 7.85971 
-#> iteration 20 , rate = 5 , rate.grad = 3.395424 
-#> iteration 30 , rate = 7 , rate.grad = 1.557189 
-#> iteration 40 , rate = 8.749491 , rate.grad = 0.6237931 
-#> iteration 50 , rate = 9.584124 , rate.grad = 0.2949889 
-#> iteration 60 , rate = 10.00197 , rate.grad = 0.154106 
-#> iteration 70 , rate = 10.22561 , rate.grad = 0.08406503 
-#> iteration 80 , rate = 10.34909 , rate.grad = 0.04685764 
-#> iteration 90 , rate = 10.41835 , rate.grad = 0.02641968 
-#> iteration 100 , rate = 10.45754 , rate.grad = 0.01499036 
-#> iteration 110 , rate = 10.47982 , rate.grad = 0.008535471 
-#> iteration 120 , rate = 10.49252 , rate.grad = 0.004869762 
-#> iteration 130 , rate = 10.49977 , rate.grad = 0.002781499 
-#> iteration 140 , rate = 10.50391 , rate.grad = 0.001589754 
-#> iteration 150 , rate = 10.50628 , rate.grad = 0.0009089512 
-#> iteration 160 , rate = 10.50763 , rate.grad = 0.0005198073 
-#> iteration 170 , rate = 10.50841 , rate.grad = 0.000297301 
-#> iteration 180 , rate = 10.50885 , rate.grad = 0.0001700514 
-#> iteration 190 , rate = 10.5091 , rate.grad = 9.727046e-05 
-#> iteration 200 , rate = 10.50925 , rate.grad = 5.564057e-05
+#> iteration 10 , rate = 3 , rate.grad = 7.261089 
+#> iteration 20 , rate = 5 , rate.grad = 2.796803 
+#> iteration 30 , rate = 6.991714 , rate.grad = 0.9585682 
+#> iteration 40 , rate = 8.038382 , rate.grad = 0.3076895 
+#> iteration 50 , rate = 8.417195 , rate.grad = 0.1212328 
+#> iteration 60 , rate = 8.57176 , rate.grad = 0.05082324 
+#> iteration 70 , rate = 8.63742 , rate.grad = 0.02181832 
+#> iteration 80 , rate = 8.665762 , rate.grad = 0.009459143 
+#> iteration 90 , rate = 8.678078 , rate.grad = 0.004118187 
+#> iteration 100 , rate = 8.683446 , rate.grad = 0.001796177 
+#> iteration 110 , rate = 8.685788 , rate.grad = 0.0007840346 
+#> iteration 120 , rate = 8.68681 , rate.grad = 0.0003423505 
+#> iteration 130 , rate = 8.687257 , rate.grad = 0.0001495106 
+#> iteration 140 , rate = 8.687452 , rate.grad = 6.529823e-05 
+#> iteration 150 , rate = 8.687537 , rate.grad = 2.851959e-05 
+#> iteration 160 , rate = 8.687574 , rate.grad = 1.245635e-05 
+#> iteration 170 , rate = 8.68759 , rate.grad = 5.44052e-06 
+#> iteration 180 , rate = 8.687597 , rate.grad = 2.376245e-06 
+#> iteration 190 , rate = 8.6876 , rate.grad = 1.037869e-06 
+#> iteration 200 , rate = 8.687602 , rate.grad = 4.533085e-07
 ```
 
 Did it converge to the MLE?

@@ -1,0 +1,6 @@
+url: https://queelius.github.io/femtograd/
+template:
+  params:
+    mathjax: true
+  bootstrap: 5
+

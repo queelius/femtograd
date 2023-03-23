@@ -4,67 +4,61 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Let's you construct differentiable expressions using auto differentiation.">
 <title>Like Micrograd, But Worse • femtograd</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Like Micrograd, But Worse">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Like Micrograd, But Worse">
 <meta property="og:description" content="Let's you construct differentiable expressions using auto differentiation.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">femtograd</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9000</span>
-      </span>
-    </div>
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    
+    <a class="navbar-brand me-2" href="index.html">femtograd</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="reference/index.html">Reference</a>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9000</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav"></ul>
 </div>
-<!--/.nav-collapse -->
+
+    
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
-
-      
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-<div class="section level1">
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="femtograd">femtograd<a class="anchor" aria-label="anchor" href="#femtograd"></a>
 </h1></div>
-<ul><li><a href="#01-exponential-distribution">0.1 Exponential distribution</a></li></ul>
 <p>Here’s a quick demonstration of how to use the <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a> R package.</p>
 <p>Load it like this:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">femtograd</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="01-exponential-distribution">0.1 Exponential distribution<a class="anchor" aria-label="anchor" href="#01-exponential-distribution"></a>
+<h2 id="exponential-distribution">Exponential distribution<a class="anchor" aria-label="anchor" href="#exponential-distribution"></a>
 </h2>
 <p>Let’s create a simple loglikelihood function for the exponential distribution paramterized by <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Clambda%20%22%5Clambda%22" alt="\lambda"> (failure rate).</p>
 <p>We have<br><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%0A%20%20f_%7BT_i%7D%28t_i%20%7C%20%5Clambda%29%20%3D%20%5Clambda%20%5Cexp%28-%5Clambda%20t_i%29.%0A%20%22%20f_%7BT_i%7D(t_i%20%7C%20%5Clambda)%20=%20%5Clambda%20%5Cexp(-%5Clambda%20t_i).%20%22" alt="
@@ -79,11 +73,11 @@ So, the loglikelihood function is just<br><img src="https://latex.codecogs.com/p
 <span><span class="va">true_rate</span> <span class="op">&lt;-</span> <span class="fl">7.3</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">true_rate</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.067121114 0.022125584 0.141639518 0.001758898 0.025229679 0.138780163</span></span>
+<span><span class="co">#&gt; [1] 0.05387135 0.07232008 0.12197395 0.03077618 0.17593061 0.09581282</span></span>
 <span></span>
 <span><span class="op">(</span><span class="va">mle.rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 10.50944</span></span></code></pre></div>
-<p>We see that the MLE <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Chat%5Ctheta%20%22%5Chat%5Ctheta%22" alt="\hat\theta"> is 10.5094428. Let’s solve for the MLE iteratively as a demonstration of how to use <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a>. First, we construct the log-likelihood function.</p>
+<span><span class="co">#&gt; [1] 8.687603</span></span></code></pre></div>
+<p>We see that the MLE <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Chat%5Ctheta%20%22%5Chat%5Ctheta%22" alt="\hat\theta"> is 8.6876029. Let’s solve for the MLE iteratively as a demonstration of how to use <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a>. First, we construct the log-likelihood function.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">loglike_exp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
 <span><span class="op">{</span></span>
@@ -115,26 +109,26 @@ So, the loglikelihood function is just<br><img src="https://latex.codecogs.com/p
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">10</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"iteration"</span>, <span class="va">i</span>, <span class="st">", rate ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">data</span>, <span class="st">", rate.grad ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">grad</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; iteration 10 , rate = 3 , rate.grad = 7.85971 </span></span>
-<span><span class="co">#&gt; iteration 20 , rate = 5 , rate.grad = 3.395424 </span></span>
-<span><span class="co">#&gt; iteration 30 , rate = 7 , rate.grad = 1.557189 </span></span>
-<span><span class="co">#&gt; iteration 40 , rate = 8.749491 , rate.grad = 0.6237931 </span></span>
-<span><span class="co">#&gt; iteration 50 , rate = 9.584124 , rate.grad = 0.2949889 </span></span>
-<span><span class="co">#&gt; iteration 60 , rate = 10.00197 , rate.grad = 0.154106 </span></span>
-<span><span class="co">#&gt; iteration 70 , rate = 10.22561 , rate.grad = 0.08406503 </span></span>
-<span><span class="co">#&gt; iteration 80 , rate = 10.34909 , rate.grad = 0.04685764 </span></span>
-<span><span class="co">#&gt; iteration 90 , rate = 10.41835 , rate.grad = 0.02641968 </span></span>
-<span><span class="co">#&gt; iteration 100 , rate = 10.45754 , rate.grad = 0.01499036 </span></span>
-<span><span class="co">#&gt; iteration 110 , rate = 10.47982 , rate.grad = 0.008535471 </span></span>
-<span><span class="co">#&gt; iteration 120 , rate = 10.49252 , rate.grad = 0.004869762 </span></span>
-<span><span class="co">#&gt; iteration 130 , rate = 10.49977 , rate.grad = 0.002781499 </span></span>
-<span><span class="co">#&gt; iteration 140 , rate = 10.50391 , rate.grad = 0.001589754 </span></span>
-<span><span class="co">#&gt; iteration 150 , rate = 10.50628 , rate.grad = 0.0009089512 </span></span>
-<span><span class="co">#&gt; iteration 160 , rate = 10.50763 , rate.grad = 0.0005198073 </span></span>
-<span><span class="co">#&gt; iteration 170 , rate = 10.50841 , rate.grad = 0.000297301 </span></span>
-<span><span class="co">#&gt; iteration 180 , rate = 10.50885 , rate.grad = 0.0001700514 </span></span>
-<span><span class="co">#&gt; iteration 190 , rate = 10.5091 , rate.grad = 9.727046e-05 </span></span>
-<span><span class="co">#&gt; iteration 200 , rate = 10.50925 , rate.grad = 5.564057e-05</span></span></code></pre></div>
+<span><span class="co">#&gt; iteration 10 , rate = 3 , rate.grad = 7.261089 </span></span>
+<span><span class="co">#&gt; iteration 20 , rate = 5 , rate.grad = 2.796803 </span></span>
+<span><span class="co">#&gt; iteration 30 , rate = 6.991714 , rate.grad = 0.9585682 </span></span>
+<span><span class="co">#&gt; iteration 40 , rate = 8.038382 , rate.grad = 0.3076895 </span></span>
+<span><span class="co">#&gt; iteration 50 , rate = 8.417195 , rate.grad = 0.1212328 </span></span>
+<span><span class="co">#&gt; iteration 60 , rate = 8.57176 , rate.grad = 0.05082324 </span></span>
+<span><span class="co">#&gt; iteration 70 , rate = 8.63742 , rate.grad = 0.02181832 </span></span>
+<span><span class="co">#&gt; iteration 80 , rate = 8.665762 , rate.grad = 0.009459143 </span></span>
+<span><span class="co">#&gt; iteration 90 , rate = 8.678078 , rate.grad = 0.004118187 </span></span>
+<span><span class="co">#&gt; iteration 100 , rate = 8.683446 , rate.grad = 0.001796177 </span></span>
+<span><span class="co">#&gt; iteration 110 , rate = 8.685788 , rate.grad = 0.0007840346 </span></span>
+<span><span class="co">#&gt; iteration 120 , rate = 8.68681 , rate.grad = 0.0003423505 </span></span>
+<span><span class="co">#&gt; iteration 130 , rate = 8.687257 , rate.grad = 0.0001495106 </span></span>
+<span><span class="co">#&gt; iteration 140 , rate = 8.687452 , rate.grad = 6.529823e-05 </span></span>
+<span><span class="co">#&gt; iteration 150 , rate = 8.687537 , rate.grad = 2.851959e-05 </span></span>
+<span><span class="co">#&gt; iteration 160 , rate = 8.687574 , rate.grad = 1.245635e-05 </span></span>
+<span><span class="co">#&gt; iteration 170 , rate = 8.68759 , rate.grad = 5.44052e-06 </span></span>
+<span><span class="co">#&gt; iteration 180 , rate = 8.687597 , rate.grad = 2.376245e-06 </span></span>
+<span><span class="co">#&gt; iteration 190 , rate = 8.6876 , rate.grad = 1.037869e-06 </span></span>
+<span><span class="co">#&gt; iteration 200 , rate = 8.687602 , rate.grad = 4.533085e-07</span></span></code></pre></div>
 <p>Did it converge to the MLE?</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">converged</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">mle.rate</span> <span class="op">-</span> <span class="va">rate</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span><span class="op">)</span></span>
@@ -142,10 +136,7 @@ So, the loglikelihood function is just<br><img src="https://latex.codecogs.com/p
 <p>It’s worth pointing out that we did not update <code>loglik</code> in the loop, since we only needed the gradient (score) to do that particular gradient ascent. If, however, we had used the log-likelihood value at <code>rate</code>, for instance using a line search method to avoid having to specify a step size, then we would need to update <code>loglik</code> each time through the loop.</p>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+  </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
@@ -170,25 +161,24 @@ So, the loglikelihood function is just<br><img src="https://latex.codecogs.com/p
 
 
 
-  </div>
+  </aside>
 </div>
 
 
-      <footer><div class="copyright">
+    <footer><div class="pkgdown-footer-left">
   <p></p>
 <p>Developed by Alexander Towell.</p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
   
-
 
   
 
