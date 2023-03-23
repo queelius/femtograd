@@ -13,42 +13,29 @@ library(femtograd)
 ## Exponential distribution
 
 Let’s create a simple loglikelihood function for the exponential
-distribution paramterized by
-![\\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda
-"\\lambda") (failure rate).
+distribution paramterized by $\lambda$ (failure rate).
 
-We have   
-![&#10; f\_{T\_i}(t\_i | \\lambda) = \\lambda \\exp(-\\lambda
-t\_i).&#10;](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0A%20%20f_%7BT_i%7D%28t_i%20%7C%20%5Clambda%29%20%3D%20%5Clambda%20%5Cexp%28-%5Clambda%20t_i%29.%0A
-"
-  f_{T_i}(t_i | \\lambda) = \\lambda \\exp(-\\lambda t_i).
-")  
-So, the loglikelihood function is just   
-![&#10; \\ell(\\lambda) = n \\log \\lambda - \\lambda \\sum\_{i=1}^n
-t\_i.&#10;](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0A%20%20%5Cell%28%5Clambda%29%20%3D%20n%20%5Clog%20%5Clambda%20-%20%5Clambda%20%5Csum_%7Bi%3D1%7D%5En%20t_i.%0A
-"
-  \\ell(\\lambda) = n \\log \\lambda - \\lambda \\sum_{i=1}^n t_i.
-")  
+We have $$
+  f_{T_i}(t_i | \lambda) = \lambda \exp(-\lambda t_i).
+$$ So, the loglikelihood function is just $$
+  \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
+$$
 
-Let’s generate
-![n=30](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n%3D30
-"n=30") observations.
+Let’s generate $n=30$ observations.
 
 ``` r
 n <- 30
 true_rate <- 7.3
 data <- rexp(n,true_rate)
 head(data)
-#> [1] 0.05387135 0.07232008 0.12197395 0.03077618 0.17593061 0.09581282
+#> [1] 0.055221361 0.140126138 0.011210974 0.006967867 0.335711352 0.255494529
 
 (mle.rate <- abs(1/mean(data)))
-#> [1] 8.687603
+#> [1] 6.687716
 ```
 
-We see that the MLE
-![\\hat\\theta](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Chat%5Ctheta
-"\\hat\\theta") is 8.6876029. Let’s solve for the MLE iteratively as a
-demonstration of how to use
+We see that the MLE $\hat\theta$ is 6.6877162. Let’s solve for the MLE
+iteratively as a demonstration of how to use
 [`femtograd`](https://github.com/queelius/femtograd). First, we
 construct the log-likelihood function.
 
@@ -59,11 +46,8 @@ loglike_exp <- function(rate, data)
 }
 ```
 
-Initially, we guess that
-![\\hat\\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Chat%5Clambda
-"\\hat\\lambda") is
-![5](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;5
-"5"), which is a terrible estimate.
+Initially, we guess that $\hat\lambda$ is $5$, which is a terrible
+estimate.
 
 ``` r
 rate <- val(1)
@@ -93,26 +77,26 @@ for (i in 1:200)
   if (i %% 10 == 0)
     cat("iteration", i, ", rate =", rate$data, ", rate.grad =", rate$grad, "\n")
 }
-#> iteration 10 , rate = 3 , rate.grad = 7.261089 
-#> iteration 20 , rate = 5 , rate.grad = 2.796803 
-#> iteration 30 , rate = 6.991714 , rate.grad = 0.9585682 
-#> iteration 40 , rate = 8.038382 , rate.grad = 0.3076895 
-#> iteration 50 , rate = 8.417195 , rate.grad = 0.1212328 
-#> iteration 60 , rate = 8.57176 , rate.grad = 0.05082324 
-#> iteration 70 , rate = 8.63742 , rate.grad = 0.02181832 
-#> iteration 80 , rate = 8.665762 , rate.grad = 0.009459143 
-#> iteration 90 , rate = 8.678078 , rate.grad = 0.004118187 
-#> iteration 100 , rate = 8.683446 , rate.grad = 0.001796177 
-#> iteration 110 , rate = 8.685788 , rate.grad = 0.0007840346 
-#> iteration 120 , rate = 8.68681 , rate.grad = 0.0003423505 
-#> iteration 130 , rate = 8.687257 , rate.grad = 0.0001495106 
-#> iteration 140 , rate = 8.687452 , rate.grad = 6.529823e-05 
-#> iteration 150 , rate = 8.687537 , rate.grad = 2.851959e-05 
-#> iteration 160 , rate = 8.687574 , rate.grad = 1.245635e-05 
-#> iteration 170 , rate = 8.68759 , rate.grad = 5.44052e-06 
-#> iteration 180 , rate = 8.687597 , rate.grad = 2.376245e-06 
-#> iteration 190 , rate = 8.6876 , rate.grad = 1.037869e-06 
-#> iteration 200 , rate = 8.687602 , rate.grad = 4.533085e-07
+#> iteration 10 , rate = 3 , rate.grad = 6.228449 
+#> iteration 20 , rate = 5 , rate.grad = 1.764164 
+#> iteration 30 , rate = 6.338889 , rate.grad = 0.2906576 
+#> iteration 40 , rate = 6.60888 , rate.grad = 0.06205048 
+#> iteration 50 , rate = 6.66924 , rate.grad = 0.01436616 
+#> iteration 60 , rate = 6.683351 , rate.grad = 0.003384349 
+#> iteration 70 , rate = 6.686683 , rate.grad = 0.0008004893 
+#> iteration 80 , rate = 6.687472 , rate.grad = 0.0001895165 
+#> iteration 90 , rate = 6.687658 , rate.grad = 4.487825e-05 
+#> iteration 100 , rate = 6.687703 , rate.grad = 1.062791e-05 
+#> iteration 110 , rate = 6.687713 , rate.grad = 2.516895e-06 
+#> iteration 120 , rate = 6.687715 , rate.grad = 5.960515e-07 
+#> iteration 130 , rate = 6.687716 , rate.grad = 1.411571e-07 
+#> iteration 140 , rate = 6.687716 , rate.grad = 3.342887e-08 
+#> iteration 150 , rate = 6.687716 , rate.grad = 7.916637e-09 
+#> iteration 160 , rate = 6.687716 , rate.grad = 1.874821e-09 
+#> iteration 170 , rate = 6.687716 , rate.grad = 4.439951e-10 
+#> iteration 180 , rate = 6.687716 , rate.grad = 1.05147e-10 
+#> iteration 190 , rate = 6.687716 , rate.grad = 2.490097e-11 
+#> iteration 200 , rate = 6.687716 , rate.grad = 5.896617e-12
 ```
 
 Did it converge to the MLE?
