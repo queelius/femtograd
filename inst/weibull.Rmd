@@ -1,0 +1,89 @@
+## Weibull distribution
+
+Now let's do it for a slightly more complicated distribution, Weibull.
+
+```{r}
+loglike_weibull <- function(shape, scale, data)
+{
+  n <- length(data)
+  s <- sum_values(lapply(data, function(x) (val(x) / scale)^shape))
+  a <- sum_values(lapply(data, function(x) log(val(x) / scale)))
+  
+  val(n) * log(shape/scale) + (shape - val(1)) * a - s
+}
+
+n <- 35
+true_shape <- 12
+true_scale <- 290
+data <- rweibull(n, true_shape, true_scale)
+
+shape <- val(10)
+scale <- val(100)
+shape.v <- 0
+scale.v <- 0
+beta <- .9
+lr <- 0.0001
+for (i in 1:100)
+{
+  loglik <- loglike_weibull(shape, scale, data)
+  zero_grad(loglik)
+  backward(loglik)
+  
+  # update velocity with momentum
+  shape.v <- beta * shape.v + grad_clip(shape$grad)
+  scale.v <- beta * scale.v + grad_clip(scale$grad)
+
+  # update parameters
+  shape$data <- shape$data + lr * shape.v
+  scale$data <- scale$data + lr * scale.v
+  
+  if (i %% 10 == 0)
+  {
+    output <- sprintf(
+      "-------- Iteration %d --------
+        loglike = %f
+        shape = %f, grad = %f, vel = %f
+        scale = %f, grad = %f, vel = %f
+        error = %f, %f\n",
+        i,
+        loglik$data,
+        shape$data, shape$grad, shape.v,
+        scale$data, scale$grad, scale.v,
+        shape$data - true_shape, scale$data - true_scale)
+    cat(output)
+  }
+}
+
+lr <- 0.01
+for (i in 1:2000)
+{
+  loglik <- loglike_weibull(shape, scale, data)
+  zero_grad(loglik)
+  backward(loglik)
+  
+  # we updated loglik so we can show the updated log-likelihood
+  if (i %% 100 == 0)
+    cat("loglike =", loglik$data, "shape =", shape$data, ", shape.grad =", shape$grad, " scale =", scale$data,", scale.grad =", scale$grad, "\n")
+
+  # update velocity with momentum
+  shape.v <- beta * shape.v + grad_clip(shape$grad)
+  scale.v <- beta * scale.v + grad_clip(scale$grad)
+
+  # update parameters
+  shape$data <- shape$data + lr * shape.v
+  scale$data <- scale$data + lr * scale.v
+}
+
+print(c(shape=shape$data, scale=scale$data, loglike=loglik$data))
+```
+
+
+```{r}
+library(devtools)
+install_github("queelius/algebraic.mle")
+
+library(algebraic.mle)
+
+?algebraic.mle
+
+```

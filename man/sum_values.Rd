@@ -7,7 +7,7 @@
 sum_values(values = NULL)
 }
 \arguments{
-\item{values}{A list of value objects}
+\item{values}{A list of objects that can be added}
 }
 \value{
 A new value object representing the sum of all input value objects

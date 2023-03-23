@@ -1,12 +1,6 @@
 ---
-title: "femtograd: Introduction"
-output:
-  rmarkdown::html_vignette:
-    toc: true
-vignette: >
-  %\VignetteIndexEntry{femtograd: Introduction}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "femtograd"
+output: github_document
 ---
 
 ```{r, include = FALSE}
@@ -41,7 +35,7 @@ $$
 Let's generate $n=30$ observations.
 ```{r}
 n <- 30
-true_rate <- 1
+true_rate <- 7.3
 data <- rexp(n,true_rate)
 head(data)
 
@@ -61,7 +55,7 @@ loglike_exp <- function(rate, data)
 
 Initially, we guess that $\hat\lambda$ is $5$, which is a terrible estimate.
 ```{r}
-rate <- val(-100)
+rate <- val(1)
 ```
 
 Next, we find the MLE using a simple iteration (100 loops).
@@ -77,13 +71,15 @@ grad_clip <- function(grad, max_norm = 1)
 }
 
 loglik <- loglike_exp(rate, data)
-for (i in 1:20)
+lr <- 0.2
+for (i in 1:200)
 {
   zero_grad(loglik)
   backward(loglik)
 
-  rate$data <- rate$data + 0.01 * grad_clip(rate$grad)
-  cat("loglike =", loglik$data, ", rate =", rate$data, ", score =", rate$grad, "\n")
+  rate$data <- rate$data + lr * grad_clip(rate$grad)
+  if (i %% 10 == 0)
+    cat("iteration", i, ", rate =", rate$data, ", rate.grad =", rate$grad, "\n")
 }
 ```
 
@@ -98,47 +94,3 @@ If, however, we had used the log-likelihood value at `rate`, for instance
 using a line search method to avoid having to specify a step size,
 then we would need to update `loglik` each time through the loop.
 
-## Weibull distribution
-
-Now let's do it for a slightly more complicated distribution, Weibull.
-
-```{r}
-loglike_weibull <- function(shape, scale, data)
-{
-  n <- length(data)
-  s <- sum_values(lapply(data, function(x) (val(x) / scale)^shape))
-  a <- sum_values(lapply(data, function(x) log(val(x) / scale)))
-  
-  val(n) * log(shape/scale) + (shape - val(1)) * a - s
-}
-
-n <- 30
-true_shape <- 10
-true_scale <- 29
-data <- rweibull(n, true_shape, true_scale)
-
-shape <- val(5)
-scale <- val(5)
-shape.v <- 0
-scale.v <- 0
-beta <- .9
-lr <- 0.01
-for (i in 1:20)
-{
-  loglik <- loglike_weibull(shape, scale, data)
-  zero_grad(loglik)
-  backward(loglik)
-  
-  # we updated loglik so we can show the updated log-likelihood
-  cat("loglike =", loglik$data, ", dl/dk =", shape$grad, ", dl/ds =", scale$grad, "\n")
-
-  # update velocity with momentum
-  shape.v <- beta * shape.v + grad_clip(shape$grad, max_norm=10)
-  scale.v <- beta * scale.v + grad_clip(scale$grad, max_norm=10)
-
-  # update parameters
-  shape$data <- shape$data + lr * shape.v
-  scale$data <- scale$data + lr * scale.v
-}
-print(c(shape=shape$data, scale=scale$data, loglike=loglik$data))
-```

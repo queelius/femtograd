@@ -42,18 +42,6 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/femtograd-intro.html">femtograd: Introduction</a>
-    </li>
-  </ul>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -70,7 +58,89 @@
 <div class="section level1">
 <div class="page-header"><h1 id="femtograd">femtograd<a class="anchor" aria-label="anchor" href="#femtograd"></a>
 </h1></div>
-<p>Like micrograd, but worse.</p>
+<ul><li><a href="#01-exponential-distribution">0.1 Exponential distribution</a></li></ul>
+<p>Here’s a quick demonstration of how to use the <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a> R package.</p>
+<p>Load it like this:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">femtograd</span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="01-exponential-distribution">0.1 Exponential distribution<a class="anchor" aria-label="anchor" href="#01-exponential-distribution"></a>
+</h2>
+<p>Let’s create a simple loglikelihood function for the exponential distribution paramterized by <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Clambda%20%22%5Clambda%22" alt="\lambda"> (failure rate).</p>
+<p>We have<br><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%0A%20%20f_%7BT_i%7D%28t_i%20%7C%20%5Clambda%29%20%3D%20%5Clambda%20%5Cexp%28-%5Clambda%20t_i%29.%0A%20%22%20f_%7BT_i%7D(t_i%20%7C%20%5Clambda)%20=%20%5Clambda%20%5Cexp(-%5Clambda%20t_i).%20%22" alt="
+ f_{T_i}(t_i | \lambda) = \lambda \exp(-\lambda t_i).
+"><br>
+So, the loglikelihood function is just<br><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%0A%20%20%5Cell%28%5Clambda%29%20%3D%20n%20%5Clog%20%5Clambda%20-%20%5Clambda%20%5Csum_%7Bi%3D1%7D%5En%20t_i.%0A%20%22%20%5Cell(%5Clambda)%20=%20n%20%5Clog%20%5Clambda%20-%20%5Clambda%20%5Csum_%7Bi=1%7D%5En%20t_i.%20%22" alt="
+ \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
+"></p>
+<p>Let’s generate <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;n%3D30%20%22n=30%22" alt="n=30"> observations.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
+<span><span class="va">true_rate</span> <span class="op">&lt;-</span> <span class="fl">7.3</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">true_rate</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.067121114 0.022125584 0.141639518 0.001758898 0.025229679 0.138780163</span></span>
+<span></span>
+<span><span class="op">(</span><span class="va">mle.rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 10.50944</span></span></code></pre></div>
+<p>We see that the MLE <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Chat%5Ctheta%20%22%5Chat%5Ctheta%22" alt="\hat\theta"> is 10.5094428. Let’s solve for the MLE iteratively as a demonstration of how to use <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a>. First, we construct the log-likelihood function.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">loglike_exp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">-</span> <span class="va">rate</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Initially, we guess that <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Chat%5Clambda%20%22%5Chat%5Clambda%22" alt="\hat\lambda"> is <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;5%20%225%22" alt="5">, which is a terrible estimate.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>Next, we find the MLE using a simple iteration (100 loops).</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># to prevent taking too large of a step</span></span>
+<span><span class="co"># gradients are a local feature, so we don't want to make too big of jumps</span></span>
+<span><span class="va">grad_clip</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">grad</span>, <span class="va">max_norm</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="va">norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">grad</span> <span class="op">*</span> <span class="va">grad</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">norm</span> <span class="op">&gt;</span> <span class="va">max_norm</span><span class="op">)</span></span>
+<span>    <span class="va">grad</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">max_norm</span> <span class="op">/</span> <span class="va">norm</span><span class="op">)</span> <span class="op">*</span> <span class="va">grad</span></span>
+<span>  <span class="va">grad</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="fu">loglike_exp</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
+<span><span class="va">lr</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">200</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="fu">zero_grad</span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/backward.html">backward</a></span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">rate</span><span class="op">$</span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">rate</span><span class="op">$</span><span class="va">data</span> <span class="op">+</span> <span class="va">lr</span> <span class="op">*</span> <span class="fu">grad_clip</span><span class="op">(</span><span class="va">rate</span><span class="op">$</span><span class="va">grad</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">10</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"iteration"</span>, <span class="va">i</span>, <span class="st">", rate ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">data</span>, <span class="st">", rate.grad ="</span>, <span class="va">rate</span><span class="op">$</span><span class="va">grad</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; iteration 10 , rate = 3 , rate.grad = 7.85971 </span></span>
+<span><span class="co">#&gt; iteration 20 , rate = 5 , rate.grad = 3.395424 </span></span>
+<span><span class="co">#&gt; iteration 30 , rate = 7 , rate.grad = 1.557189 </span></span>
+<span><span class="co">#&gt; iteration 40 , rate = 8.749491 , rate.grad = 0.6237931 </span></span>
+<span><span class="co">#&gt; iteration 50 , rate = 9.584124 , rate.grad = 0.2949889 </span></span>
+<span><span class="co">#&gt; iteration 60 , rate = 10.00197 , rate.grad = 0.154106 </span></span>
+<span><span class="co">#&gt; iteration 70 , rate = 10.22561 , rate.grad = 0.08406503 </span></span>
+<span><span class="co">#&gt; iteration 80 , rate = 10.34909 , rate.grad = 0.04685764 </span></span>
+<span><span class="co">#&gt; iteration 90 , rate = 10.41835 , rate.grad = 0.02641968 </span></span>
+<span><span class="co">#&gt; iteration 100 , rate = 10.45754 , rate.grad = 0.01499036 </span></span>
+<span><span class="co">#&gt; iteration 110 , rate = 10.47982 , rate.grad = 0.008535471 </span></span>
+<span><span class="co">#&gt; iteration 120 , rate = 10.49252 , rate.grad = 0.004869762 </span></span>
+<span><span class="co">#&gt; iteration 130 , rate = 10.49977 , rate.grad = 0.002781499 </span></span>
+<span><span class="co">#&gt; iteration 140 , rate = 10.50391 , rate.grad = 0.001589754 </span></span>
+<span><span class="co">#&gt; iteration 150 , rate = 10.50628 , rate.grad = 0.0009089512 </span></span>
+<span><span class="co">#&gt; iteration 160 , rate = 10.50763 , rate.grad = 0.0005198073 </span></span>
+<span><span class="co">#&gt; iteration 170 , rate = 10.50841 , rate.grad = 0.000297301 </span></span>
+<span><span class="co">#&gt; iteration 180 , rate = 10.50885 , rate.grad = 0.0001700514 </span></span>
+<span><span class="co">#&gt; iteration 190 , rate = 10.5091 , rate.grad = 9.727046e-05 </span></span>
+<span><span class="co">#&gt; iteration 200 , rate = 10.50925 , rate.grad = 5.564057e-05</span></span></code></pre></div>
+<p>Did it converge to the MLE?</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">converged</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">mle.rate</span> <span class="op">-</span> <span class="va">rate</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>It’s worth pointing out that we did not update <code>loglik</code> in the loop, since we only needed the gradient (score) to do that particular gradient ascent. If, however, we had used the log-likelihood value at <code>rate</code>, for instance using a line search method to avoid having to specify a step size, then we would need to update <code>loglik</code> each time through the loop.</p>
+</div>
 </div>
   </div>
 
