@@ -2,7 +2,7 @@
 % Please edit documentation in R/value.R
 \name{val}
 \alias{val}
-\title{value constructor}
+\title{\code{value} object constructor}
 \usage{
 val(data)
 }
@@ -14,5 +14,5 @@ differentiation. This constructor function creates a new value object with
 the specified data.}
 }
 \description{
-value constructor
+\code{value} object constructor
 }

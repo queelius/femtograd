@@ -10,7 +10,7 @@
 {
   if (!is_value(e2))
     e2 <- val(e2)
-  out <- value$new(e1$data + e2$data, list(e1, e2), '+')
+  out <- value$new(e1$data + e2$data, list(e1, e2))
   out$backward_fn <- function()
   {
     e1$grad <<- e1$grad + out$grad
@@ -30,7 +30,7 @@
 {
   if (!is_value(e2))
     e2 <- val(e2)
-  out <- value$new(e1$data * e2$data, list(e1, e2), '*')
+  out <- value$new(e1$data * e2$data, list(e1, e2))
   out$backward_fn <- function()
   {
     e1$grad <<- e1$grad + e2$data * out$grad
@@ -50,7 +50,7 @@
 {
   if (is_value(e))
   {
-    out <- value$new(b$data^e$data, list(b, e), '^')
+    out <- value$new(b$data^e$data, list(b, e))
     out$backward_fn <- function()
     {
       b$grad <<- b$grad + e$data * b$data^(e$data - 1) * out$grad
@@ -60,7 +60,7 @@
   }
   else
   {
-    out <- value$new(b$data^e, list(b), '^')
+    out <- value$new(b$data^e, list(b))
     out$backward_fn <- function()
     {
       b$grad <<- b$grad + e * b$data^(e - 1) * out$grad
@@ -81,7 +81,7 @@ sum_values <- function(values = NULL)
     return(val(0))
 
   s <- sum(sapply(values, retrieve))
-  out <- value$new(s, Filter(is_value, values), "sum_values")
+  out <- value$new(s, Filter(is_value, values))
   out$backward_fn <- function()
   {
     for (child in out$prev)
@@ -99,7 +99,7 @@ sum_values <- function(values = NULL)
 #' @export
 log.value <- function(x)
 {
-  out <- value$new(log(x$data), list(x), 'log')
+  out <- value$new(log(x$data), list(x))
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + (1 / x$data) * out$grad
@@ -115,7 +115,7 @@ log.value <- function(x)
 #' @export
 exp.value <- function(x)
 {
-  out <- value$new(exp(x$data), list(x), 'exp')
+  out <- value$new(exp(x$data), list(x))
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + (exp(x$data)) * out$grad
@@ -134,7 +134,7 @@ exp.value <- function(x)
 {
   if (!is_value(y))
     y <- val(y)
-  out <- value$new(x$data / y$data, list(x, y), '/')
+  out <- value$new(x$data / y$data, list(x, y))
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + (1 / y$data) * out$grad
@@ -151,7 +151,7 @@ exp.value <- function(x)
 #' @export
 sqrt.value <- function(x)
 {
-  out <- value$new(sqrt(x$data), list(x), 'sqrt')
+  out <- value$new(sqrt(x$data), list(x))
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + (1 / (2 * sqrt(x$data))) * out$grad
@@ -170,7 +170,7 @@ sqrt.value <- function(x)
 `-.value` <- function(x, y)
 {
   y <- if (is_value(y)) y else val(y)
-  out <- value$new(x$data - y$data, list(x, y), '-')
+  out <- value$new(x$data - y$data, list(x, y))
   out$backward_fn <- function()
   {
     x$grad <<- x$grad + out$grad

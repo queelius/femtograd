@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{e}{A value object for which the backward pass should be performed}
+
+\item{...}{pass additional arguments}
 }
 \description{
 Performs the backward pass (gradient computation) for a value object in the

@@ -8,7 +8,6 @@
 #' @field grad Gradient value, initially set to 0
 #' @field backward_fn A function that performs the backward pass (gradient computation)
 #' @field prev A list of previous nodes in the computational graph
-#' @field op A character string representing the operation associated with the node
 #'
 #' @import R6
 #' @export
@@ -18,23 +17,20 @@ value <- R6Class("value",
      grad = 0,
      backward_fn = NULL,
      prev = NULL,
-     op = "",
 
      #' @description Initializes a new value object with the given data, list of children, and operation name.
      #' @param data Numeric value of the object
      #' @param children List of previous nodes in the computational graph (default: empty list)
-     #' @param op A character string representing the operation associated with the node (default: empty string)
-     initialize = function(data, children = list(), op = "")
+     initialize = function(data, children = list())
      {
        self$data <- data
        self$grad <- 0
        self$backward_fn <- function() NULL
        self$prev <- children
-       self$op <- op
      })
 )
 
-#' value constructor
+#' \code{value} object constructor
 #'
 #' @param data Numeric value of the object
 #'
@@ -47,25 +43,21 @@ val <- function(data)
   value$new(data)
 }
 
-#' Representation of a value object
+#' Generic function for the Backward pass for automatic differentiation (finds
+#' the gradient of every sub-node in the computational graph with respect to
+#' \code{e}). In other words, it is responsible for computing the gradient with
+#' respect to \code{e}.
 #'
-#' Creates a string representation of a value object including its data and gradient values.
-#'
-#' @param x A value object
-#'
-#' @return A string representation of the value object
-#' @export
-repr <- function(x) sprintf("value(data=%s, grad=%s)", x$data, x$grad)
-
-#' Backward pass for automatic differentiation
-#'
-#' Generic function for the backward pass, responsible for computing gradients in the
-#' computational graph. This function should be implemented for specific classes.
+#' This generic function should be implemented for specific classes. We provide
+#' an implementation for \code{value} objects.
 #'
 #' @param e An object for which the backward pass should be performed
-#'
+#' @param ... additional arguments to pass
 #' @export
-backward <- function(e) UseMethod("backward")
+backward <- function(e, ...)
+{
+  UseMethod("backward")
+}
 
 #' Backward pass for value objects
 #'
@@ -73,7 +65,7 @@ backward <- function(e) UseMethod("backward")
 #' computational graph with automatic differentiation.
 #'
 #' @param e A value object for which the backward pass should be performed
-#'
+#' @param ... pass additional arguments
 #' @export
 backward.value <- function(x)
 {
@@ -103,19 +95,23 @@ zero_grad.value <- function(e)
 #' Print value object and its computational graph
 #'
 #' @param v A value object
+#' @param depth Integer indicates depth (dfs) to recursve down the graph
 #' @param indent A character string specifying the indentation for each level in
 #' the computational graph (default: "  ")
 #'
 #' @export
-print.value <- function(v, indent = "  ")
+print.value <- function(v, depth = Inf, indent = "  ")
 {
-  print_tree <- function(x, offset)
+  print_helper <- function(x, offset, depth)
   {
-    cat(offset, "value( data =", x$data, ", grad =", x$grad, ", op =", x$op, ")\n")
-    for (child in x$prev)
-      print_tree(child, paste0(offset, indent))
+    cat(offset, "value( data =", x$data, ", grad =", x$grad, ")\n")
+    if (depth > 0)
+    {
+      for (child in x$prev)
+        print_helper(child, depth-1, paste0(offset, indent))
+    }
   }
-  print_tree(v, "")
+  print_helper(v, depth, "")
 }
 
 #' Check if an object is of class value
@@ -129,35 +125,94 @@ print.value <- function(v, indent = "  ")
 is_value <- function(x) inherits(x, "value")
 
 
-#' Retrieve the value or data from an object
+#' Retrieve the data stored by an object.
 #'
 #' @param x An object to retrieve the value or data from
+#' @param ... additional arguments to pass
 #'
-#' @return The value or data of the object if it is a value object, or the original object if it is not a value object
+#' @return The value or data of a differnetiable object
 #' @export
-retrieve <- function(x)
+data <- function(x, ...)
 {
-  UseMethod("retrieve")
+  UseMethod("data")
 }
 
 #' Retrieve the value or data from a value object
 #'
 #' @param x A value object
+#' @param ... additional arguments to pass
 #'
 #' @return The value or data of the value object
 #' @export
-retrieve.value <- function(x)
+data.value <- function(x, ...)
 {
   x$data
 }
 
-#' Retrieve the value or data from a non-value object
+#' Default implementation for retrieving the data from a differentiable object
 #'
 #' @param x A non-value object
+#' @param ... pass additional arguments
 #'
 #' @return The original object
 #' @export
-retrieve.default <- function(x)
+data.default <- function(x, ...)
 {
   x
+}
+
+
+#' Gradient of \code{x} with respect to \code{e} in \code{backward(e)},
+#' e.g., dx/de. (applies the chain rule)
+#'
+#' @param x A differential object
+#' @param ... pass additional arguments
+#' @return The gradient as previously defined
+#' @export
+grad <- function(x, ...)
+{
+  UseMethod("grad")
+}
+
+#' Gradient of a \code{value} object \code{x} with respect to \code{e} in
+#' \code{backward(e)}, e.g., dx/de. (applies the chain rule)
+#'
+#' @param x A value object
+#' @param ... pass additional arguments
+#' @return The value or data of the value object
+#' @export
+grad.value <- function(x, ...)
+{
+  x$grad
+}
+
+#' Default gradient is one that does not propograte gradients and is zero.\code{value} object \code{x} with respect to \code{e} in
+#' \code{backward(e)}, e.g., dx/de. (applies the chain rule)
+#'
+#' @param x A value object
+#' @param ... pass additional arguments
+#'
+#' @return The value or data of the value object
+#' @export
+grad.default <- function(x, ...)
+{
+  0.0
+}
+
+
+#' Default implementation does not propagate gradients. For instance, if we
+#' have a constant, then the partial of the constant is not meaningful.
+#'
+#' @param e A value object for which the backward pass should be performed
+#' @param ... pass additional arguments
+#'
+#' @export
+backward.default <- function(x, ...)
+{
+}
+
+#' @export
+zero_grad.default <- function(e)
+{
+
 }

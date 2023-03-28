@@ -23,8 +23,6 @@ and an operation name.
 \item{\code{backward_fn}}{A function that performs the backward pass (gradient computation)}
 
 \item{\code{prev}}{A list of previous nodes in the computational graph}
-
-\item{\code{op}}{A character string representing the operation associated with the node}
 }
 \if{html}{\out{</div>}}
 }
@@ -41,7 +39,7 @@ and an operation name.
 \subsection{Method \code{new()}}{
 Initializes a new value object with the given data, list of children, and operation name.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{value$new(data, children = list(), op = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{value$new(data, children = list())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -50,8 +48,6 @@ Initializes a new value object with the given data, list of children, and operat
 \item{\code{data}}{Numeric value of the object}
 
 \item{\code{children}}{List of previous nodes in the computational graph (default: empty list)}
-
-\item{\code{op}}{A character string representing the operation associated with the node (default: empty string)}
 }
 \if{html}{\out{</div>}}
 }

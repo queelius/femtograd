@@ -2,14 +2,19 @@
 % Please edit documentation in R/value.R
 \name{backward}
 \alias{backward}
-\title{Backward pass for automatic differentiation}
+\title{Generic function for the Backward pass for automatic differentiation (finds
+the gradient of every sub-node in the computational graph with respect to
+\code{e}). In other words, it is responsible for computing the gradient with
+respect to \code{e}.}
 \usage{
-backward(e)
+backward(e, ...)
 }
 \arguments{
 \item{e}{An object for which the backward pass should be performed}
+
+\item{...}{additional arguments to pass}
 }
 \description{
-Generic function for the backward pass, responsible for computing gradients in the
-computational graph. This function should be implemented for specific classes.
+This generic function should be implemented for specific classes. We provide
+an implementation for \code{value} objects.
 }
