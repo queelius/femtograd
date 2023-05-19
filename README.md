@@ -54,7 +54,7 @@ We see that the MLE $\hat\theta$ is 6.2455349.
 
 # Automatic differentiation (AD)
 
-Finding the value ($\operatorname{argmax}$) that maximizes the
+Finding the value (argmax) that maximizes the
 log-likelihood function is trivial to solve in this case, and it has a
 closed-form solution. However, to demonstrate the use of `femtograd`, we
 will construct a `loglike_exp` function generator that returns an object
