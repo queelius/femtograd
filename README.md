@@ -103,7 +103,7 @@ that the optimization takes smaller, more stable steps.
 Here is the R code:
 
 ``` r
-# Takes a gradient `grad` and an optional `max_norm` parameter, which defaults
+# Takes a gradient `g` and an optional `max_norm` parameter, which defaults
 # to 1. It calculates the gradient's L2 norm (Euclidean norm) and scales the
 # gradient down if its norm exceeds the specified max_norm. This is used during
 # the gradient ascent loop to help ensure stable optimization.
