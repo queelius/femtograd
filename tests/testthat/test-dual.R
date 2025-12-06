@@ -128,3 +128,46 @@ test_that("forward-mode with value objects works", {
   expect_equal(data(primal(result)), 9)
   expect_equal(data(tangent(result)), 6)
 })
+
+test_that("dual operations work with vectors (issue: && with vectors)", {
+  # Regression test: vector / dual then ^dual should not error
+  # The issue was is.numeric(da) && da == 0 fails when da is a vector
+
+  # Test vector divided by dual, then raised to dual power
+  t_vec <- c(1, 2, 3, 4, 5)
+  sigma <- dual_num(2, 1)  # sigma with tangent
+  k <- dual_num(3, 0)      # k without tangent
+
+  # This should not error with "length = 5 in coercion to logical(1)"
+  result <- (t_vec / sigma)^k
+
+  # Check values: (t/2)^3
+  expect_equal(primal(result), (t_vec / 2)^3)
+
+  # Check tangent: d/d_sigma [(t/sigma)^k] = -k * t * (t/sigma)^(k-1) / sigma^2
+  # = -3 * t * (t/2)^2 / 4 = -3 * t^3 / 16
+  expected_tangent <- -3 * t_vec * (t_vec / 2)^2 / 4
+  expect_equal(tangent(result), expected_tangent)
+})
+
+test_that("dual arithmetic with vector primals works", {
+  # Test that basic operations work when primal is a vector
+  vec <- c(1, 2, 3)
+  d <- dual_num(vec, 0)
+
+  # Addition
+  result <- d + dual_num(1, 0)
+  expect_equal(primal(result), c(2, 3, 4))
+
+  # Multiplication
+  result <- d * dual_num(2, 0)
+  expect_equal(primal(result), c(2, 4, 6))
+
+  # Power
+  result <- d^dual_num(2, 0)
+  expect_equal(primal(result), c(1, 4, 9))
+
+  # Log
+  result <- log(d)
+  expect_equal(primal(result), log(vec))
+})

@@ -71,6 +71,12 @@ tangent <- function(x)
   if (is_dual(x)) x$tangent else 0
 }
 
+# Helper to check if tangent is a scalar zero (safe for vectors)
+is_zero_tangent <- function(x)
+{
+  identical(x, 0) || identical(x, 0L)
+}
+
 # Arithmetic operations for dual numbers
 # Rule: (a, a') op (b, b') where a' and b' are tangents
 
@@ -86,9 +92,9 @@ tangent <- function(x)
   # (a + b, a' + b')
   primal_result <- a + b
   # Handle zero tangents carefully
-  if (is.numeric(da) && da == 0) {
+  if (is_zero_tangent(da)) {
     tangent_result <- db
-  } else if (is.numeric(db) && db == 0) {
+  } else if (is_zero_tangent(db)) {
     tangent_result <- da
   } else {
     tangent_result <- da + db
@@ -102,7 +108,7 @@ tangent <- function(x)
   if (is.null(e2)) {
     # Unary negation
     da <- tangent(e1)
-    neg_tangent <- if (is.numeric(da) && da == 0) 0 else -da
+    neg_tangent <- if (is_zero_tangent(da)) 0 else -da
     return(dual_num(-primal(e1), neg_tangent))
   }
   if (!is_dual(e2)) e2 <- dual_num(e2, 0)
@@ -113,9 +119,9 @@ tangent <- function(x)
   db <- tangent(e2)
   # (a - b, a' - b')
   primal_result <- a - b
-  if (is.numeric(da) && da == 0) {
-    tangent_result <- if (is.numeric(db) && db == 0) 0 else -db
-  } else if (is.numeric(db) && db == 0) {
+  if (is_zero_tangent(da)) {
+    tangent_result <- if (is_zero_tangent(db)) 0 else -db
+  } else if (is_zero_tangent(db)) {
     tangent_result <- da
   } else {
     tangent_result <- da - db
@@ -135,8 +141,8 @@ tangent <- function(x)
   # (a * b, a' * b + a * b')
   # Ensure value objects come first for proper dispatch
   primal_result <- a * b
-  term1 <- if (is.numeric(da) && da == 0) 0 else da * b
-  term2 <- if (is.numeric(db) && db == 0) 0 else a * db
+  term1 <- if (is_zero_tangent(da)) 0 else da * b
+  term2 <- if (is_zero_tangent(db)) 0 else a * db
   tangent_result <- term1 + term2
   dual_num(primal_result, tangent_result)
 }
@@ -153,8 +159,8 @@ tangent <- function(x)
   # (a/b, (a'*b - a*b') / b^2)
   primal_result <- a / b
   b2 <- b * b
-  term1 <- if (is.numeric(da) && da == 0) 0 else da * b
-  term2 <- if (is.numeric(db) && db == 0) 0 else a * db
+  term1 <- if (is_zero_tangent(da)) 0 else da * b
+  term2 <- if (is_zero_tangent(db)) 0 else a * db
   tangent_result <- (term1 - term2) / b2
   dual_num(primal_result, tangent_result)
 }
@@ -173,8 +179,8 @@ tangent <- function(x)
   # we need value to come first for correct dispatch
   primal_result <- a^b
   # Compute tangent: da * (b * a^(b-1)) + db * (a^b * log(a))
-  term1 <- if (is.numeric(da) && da == 0) 0 else da * (a^(b - 1) * b)
-  term2 <- if (is.numeric(db) && db == 0) 0 else (a^b * log(a)) * db
+  term1 <- if (is_zero_tangent(da)) 0 else da * (a^(b - 1) * b)
+  term2 <- if (is_zero_tangent(db)) 0 else (a^b * log(a)) * db
   tangent_result <- term1 + term2
   dual_num(primal_result, tangent_result)
 }
@@ -186,7 +192,7 @@ log.dual <- function(x)
   da <- tangent(x)
   # d/dx log(a) = a'/a
   primal_result <- log(a)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else da / a
+  tangent_result <- if (is_zero_tangent(da)) 0 else da / a
   dual_num(primal_result, tangent_result)
 }
 
@@ -197,7 +203,7 @@ exp.dual <- function(x)
   da <- tangent(x)
   # d/dx exp(a) = exp(a) * a'
   e <- exp(a)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else e * da
+  tangent_result <- if (is_zero_tangent(da)) 0 else e * da
   dual_num(e, tangent_result)
 }
 
@@ -208,7 +214,7 @@ sqrt.dual <- function(x)
   da <- tangent(x)
   # d/dx sqrt(a) = a' / (2*sqrt(a))
   s <- sqrt(a)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else da / (s * 2)
+  tangent_result <- if (is_zero_tangent(da)) 0 else da / (s * 2)
   dual_num(s, tangent_result)
 }
 
@@ -217,7 +223,7 @@ sin.dual <- function(x)
 {
   a <- primal(x)
   da <- tangent(x)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else cos(a) * da
+  tangent_result <- if (is_zero_tangent(da)) 0 else cos(a) * da
   dual_num(sin(a), tangent_result)
 }
 
@@ -226,7 +232,7 @@ cos.dual <- function(x)
 {
   a <- primal(x)
   da <- tangent(x)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else -sin(a) * da
+  tangent_result <- if (is_zero_tangent(da)) 0 else -sin(a) * da
   dual_num(cos(a), tangent_result)
 }
 
@@ -237,9 +243,9 @@ tanh.dual <- function(x)
   da <- tangent(x)
   t <- tanh(a)
   if (is_value(a)) {
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else (val(1) - t * t) * da
+    tangent_result <- if (is_zero_tangent(da)) 0 else (val(1) - t * t) * da
   } else {
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else (1 - t * t) * da
+    tangent_result <- if (is_zero_tangent(da)) 0 else (1 - t * t) * da
   }
   dual_num(t, tangent_result)
 }
@@ -249,7 +255,7 @@ abs.dual <- function(x)
 {
   a <- primal(x)
   da <- tangent(x)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else sign(a) * da
+  tangent_result <- if (is_zero_tangent(da)) 0 else sign(a) * da
   dual_num(abs(a), tangent_result)
 }
 
@@ -258,7 +264,7 @@ lgamma.dual <- function(x)
 {
   a <- primal(x)
   da <- tangent(x)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else digamma(a) * da
+  tangent_result <- if (is_zero_tangent(da)) 0 else digamma(a) * da
   dual_num(lgamma(a), tangent_result)
 }
 
@@ -267,7 +273,7 @@ digamma.dual <- function(x)
 {
   a <- primal(x)
   da <- tangent(x)
-  tangent_result <- if (is.numeric(da) && da == 0) 0 else trigamma(a) * da
+  tangent_result <- if (is_zero_tangent(da)) 0 else trigamma(a) * da
   dual_num(digamma(a), tangent_result)
 }
 
@@ -277,9 +283,9 @@ log1p.dual <- function(x)
   a <- primal(x)
   da <- tangent(x)
   if (is_value(a)) {
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else da / (val(1) + a)
+    tangent_result <- if (is_zero_tangent(da)) 0 else da / (val(1) + a)
   } else {
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else da / (1 + a)
+    tangent_result <- if (is_zero_tangent(da)) 0 else da / (1 + a)
   }
   dual_num(log1p(a), tangent_result)
 }
@@ -292,10 +298,10 @@ sigmoid.dual <- function(x)
   # Use value wrapper only if primal is a value object
   if (is_value(a)) {
     s <- val(1) / (val(1) + exp(-a))
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else s * (val(1) - s) * da
+    tangent_result <- if (is_zero_tangent(da)) 0 else s * (val(1) - s) * da
   } else {
     s <- 1 / (1 + exp(-a))
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else s * (1 - s) * da
+    tangent_result <- if (is_zero_tangent(da)) 0 else s * (1 - s) * da
   }
   dual_num(s, tangent_result)
 }
@@ -319,10 +325,10 @@ softplus.dual <- function(x)
   da <- tangent(x)
   if (is_value(a)) {
     s <- val(1) / (val(1) + exp(-a))  # sigmoid
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else s * da
+    tangent_result <- if (is_zero_tangent(da)) 0 else s * da
   } else {
     s <- 1 / (1 + exp(-a))  # sigmoid
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else s * da
+    tangent_result <- if (is_zero_tangent(da)) 0 else s * da
   }
   dual_num(log1p(exp(a)), tangent_result)
 }
@@ -333,10 +339,10 @@ logit.dual <- function(x)
   a <- primal(x)
   da <- tangent(x)
   if (is_value(a)) {
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else da / (a * (val(1) - a))
+    tangent_result <- if (is_zero_tangent(da)) 0 else da / (a * (val(1) - a))
     primal_result <- log(a / (val(1) - a))
   } else {
-    tangent_result <- if (is.numeric(da) && da == 0) 0 else da / (a * (1 - a))
+    tangent_result <- if (is_zero_tangent(da)) 0 else da / (a * (1 - a))
     primal_result <- log(a / (1 - a))
   }
   dual_num(primal_result, tangent_result)
