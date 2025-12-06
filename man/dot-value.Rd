@@ -4,7 +4,7 @@
 \alias{-.value}
 \title{Subtraction for value objects}
 \usage{
-\method{-}{value}(x, y)
+\method{-}{value}(x, y = NULL)
 }
 \arguments{
 \item{x}{A value object (minuend)}

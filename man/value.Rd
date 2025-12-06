@@ -11,7 +11,7 @@ value R6 class
 \details{
 Represents a node in the computational graph with automatic differentiation.
 Each value object holds data, gradient, a backward function, previous nodes,
-and an operation name.
+and an optional label for debugging.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -23,6 +23,8 @@ and an operation name.
 \item{\code{backward_fn}}{A function that performs the backward pass (gradient computation)}
 
 \item{\code{prev}}{A list of previous nodes in the computational graph}
+
+\item{\code{label}}{Optional character label for debugging (default: "")}
 }
 \if{html}{\out{</div>}}
 }
@@ -37,9 +39,9 @@ and an operation name.
 \if{html}{\out{<a id="method-value-new"></a>}}
 \if{latex}{\out{\hypertarget{method-value-new}{}}}
 \subsection{Method \code{new()}}{
-Initializes a new value object with the given data, list of children, and operation name.
+Initializes a new value object with the given data, list of children, and optional label.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{value$new(data, children = list())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{value$new(data, children = list(), label = "")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -48,6 +50,8 @@ Initializes a new value object with the given data, list of children, and operat
 \item{\code{data}}{Numeric value of the object}
 
 \item{\code{children}}{List of previous nodes in the computational graph (default: empty list)}
+
+\item{\code{label}}{Optional character label for debugging}
 }
 \if{html}{\out{</div>}}
 }

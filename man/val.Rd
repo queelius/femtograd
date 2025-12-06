@@ -4,14 +4,16 @@
 \alias{val}
 \title{\code{value} object constructor}
 \usage{
-val(data)
+val(data, label = "")
 }
 \arguments{
-\item{data}{Numeric value of the object
+\item{data}{Numeric value of the object}
+
+\item{label}{Optional character label for debugging
 
 Represents a value node in the computational graph with automatic
 differentiation. This constructor function creates a new value object with
-the specified data.}
+the specified data and optional label.}
 }
 \description{
 \code{value} object constructor
