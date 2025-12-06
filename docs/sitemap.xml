@@ -1,81 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://queelius.github.io/femtograd/404.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/index.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/backward.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/backward.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/contains.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/dot-value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/exp.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/is_value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/log.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/plus-.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/pow-.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/print.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/repr.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/retrieve.default.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/retrieve.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/retrieve.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/slash-.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/sqrt.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/sum_values.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/times-.value.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/topological_sort.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/val.html</loc>
-  </url>
-  <url>
-    <loc>https://queelius.github.io/femtograd/reference/value.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://queelius.github.io/femtograd/404.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/CLAUDE.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/LICENSE.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/authors.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/index.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/abs.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/backward.default.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/backward.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/backward.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/confint_mle.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/contains.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/cos.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/data-set.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/data.default.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/data.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/data.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/digamma.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/distributions.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/dot-value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/dual.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/dual_num.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/exp.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/find_mle.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/fisher_information.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/fisher_scoring.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/grad.default.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/grad.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/grad.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/gradient.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/gradient_ascent.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/gradient_descent.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/hessian.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/index.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/is_dual.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/is_value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/lgamma.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/log.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/log1p.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/logit.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_bernoulli.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_beta.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_binomial.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_exponential.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_gamma.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_logistic.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_negbinom.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_normal.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/loglik_poisson.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/mean.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/newton_raphson.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/optimization.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/plus-.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/pow-.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/primal.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/print.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/relu.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/repr.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/retrieve.default.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/retrieve.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/retrieve.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/sigmoid.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/sin.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/slash-.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/softplus.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/sqrt.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/std_errors.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/sum.dual.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/sum.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/sum_values.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/tangent.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/tanh.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/times-.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/topological_sort.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/trigamma.value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/val.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/value.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/vcov_matrix.html</loc></url>
+<url><loc>https://queelius.github.io/femtograd/reference/wald_test.html</loc></url>
 </urlset>
+

@@ -1,0 +1,363 @@
+# femtograd
+
+- [Exponential distribution](#exponential-distribution)
+- [Automatic differentiation (AD)](#automatic-differentiation-ad)
+
+Here’s a quick demonstration of how to use the
+[`femtograd`](https://github.com/queelius/femtograd) R package.
+
+Load it like this:
+
+``` r
+library(femtograd)
+#> 
+#> Attaching package: 'femtograd'
+#> The following object is masked from 'package:utils':
+#> 
+#>     data
+```
+
+## Exponential distribution
+
+Let’s create a simple loglikelihood function for the exponential
+distribution paramterized by $\lambda$ (failure rate).
+
+We have
+
+$$f_{T_{i}}\left( t_{i}|\lambda \right) = \lambda\exp\left( - \lambda t_{i} \right).$$
+
+So, the loglikelihood function is just
+
+$$\ell(\lambda) = n\log\lambda - \lambda\sum\limits_{i = 1}^{n}t_{i}.$$
+
+Let’s generate $n = 30$ observations.
+
+``` r
+n <- 30
+true_rate <- 7.3
+data <- rexp(n,true_rate)
+head(data)
+#> [1] 0.102432677 0.009849689 0.037429092 0.093926112 0.033046038 0.181780460
+
+(mle.rate <- abs(1/mean(data)))
+#> [1] 6.245535
+```
+
+We see that the MLE $\widehat{\theta}$ is 6.2455349.
+
+# Automatic differentiation (AD)
+
+Finding the value (argmax) that maximizes the log-likelihood function is
+trivial to solve in this case, and it has a closed-form solution.
+However, to demonstrate the use of `femtograd`, we will construct a
+`loglike_exp` function generator that returns an object that can be
+automatically differentiated (AD) using backpropogation, which is an
+efficient way of applying the chain-rule to expressions (like
+$\exp\{ yax^{2}\}$ using a *computational graph* that represents the
+expression.
+
+These kind of computational graphs have the nice property that for any
+differentiable expression that we can model in software, its partial
+derivative with respect to some node in the graph can be efficiently and
+accurately computed without resorting to numerical finite difference
+methods or slow, potentially difficult to compose symbolic methods.
+
+There are many libraries that do this. This library itself is based on
+the excellent work by Karpathy who developed the Python library known as
+[`micrograd`](https://github.com/karpathy/micrograd), which was
+developed for the explicit purpose of teaching the basic concept of AD
+and backpropagation for minimizing loss functions for neural networks.
+
+Let’s solve for the MLE iteratively as a demonstration of how to use
+[`femtograd`](https://github.com/queelius/femtograd). First, we
+construct the log-likelihood generator:
+
+``` r
+loglike_exp <- function(rate, data)
+{
+  return(log(rate)*length(data) - rate * sum(data))
+}
+```
+
+Initially, we guess that $\widehat{\lambda}$ is $1$, which is a terrible
+estimate.
+
+``` r
+rate <- val(1)
+```
+
+Gradient clipping is a technique to prevent taking too large of a step
+when gradients become too large (remember that gradients are a *local*
+feature, so we generally should not use it to take too big of a step)
+during optimization, which can cause instability or overshooting the
+optimal value. By limiting the step size, gradient clipping helps ensure
+that the optimization takes smaller, more stable steps.
+
+Here is the R code:
+
+``` r
+# Takes a gradient `g` and an optional `max_norm` parameter, which defaults
+# to 1. It calculates the gradient's L2 norm (Euclidean norm) and scales the
+# gradient down if its norm exceeds the specified max_norm. This is used during
+# the gradient ascent loop to help ensure stable optimization.
+grad_clip <- function(g, max_norm = 1) {
+  norm <- sqrt(sum(g * g))
+  if (norm > max_norm) {
+    g <- (max_norm / norm) * g
+  }
+  g
+}
+```
+
+We find the MLE using a simple iteration (200 loops).
+
+``` r
+loglik <- loglike_exp(rate, data)
+lr <- 0.2 # learning rate
+for (i in 1:200)
+{
+  zero_grad(loglik)
+  backward(loglik)
+
+  data(rate) <- data(rate) + lr * grad_clip(grad(rate))
+  if (i %% 50 == 0)
+    cat("iteration", i, ", rate =", data(rate), ", drate/dl =", grad(rate), "\n")
+}
+#> iteration 50 , rate = 6.238781 , drate/dl = 0.006148105 
+#> iteration 100 , rate = 6.245533 , drate/dl = 1.447689e-06 
+#> iteration 150 , rate = 6.245535 , drate/dl = 3.418377e-10 
+#> iteration 200 , rate = 6.245535 , drate/dl = 8.082424e-14
+```
+
+Did the gradient ascent method converge to the MLE?
+
+``` r
+(converged <- (abs(mle.rate - data(rate)) < 1e-3))
+#> [1] TRUE
+```
+
+It’s worth pointing out that we did not update `loglik` in the gradient
+ascent loop, since we only needed the gradient (score) in this case. If,
+however, we had needed to know the log-likelihood for some reason, such
+as when using a line search method to avoid overshooting, we would need
+to update with `loglik <- loglike_exp(rate, data)` each time through the
+loop.
+
+# Package index
+
+## All functions
+
+- [`abs(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/abs.value.md)
+  : Absolute value for value objects
+
+- [`backward()`](https://queelius.github.io/femtograd/reference/backward.md)
+  :
+
+  Generic function for the Backward pass for automatic differentiation
+  (finds the gradient of every sub-node in the computational graph with
+  respect to `e`). In other words, it is responsible for computing the
+  gradient with respect to `e`.
+
+- [`backward(`*`<default>`*`)`](https://queelius.github.io/femtograd/reference/backward.default.md)
+  : Default implementation does not propagate gradients. For instance,
+  if we have a constant, then the partial of the constant is not
+  meaningful.
+
+- [`backward(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/backward.value.md)
+  : Backward pass for value objects
+
+- [`confint_mle()`](https://queelius.github.io/femtograd/reference/confint_mle.md)
+  : Compute confidence intervals from MLE results
+
+- [`cos(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/cos.value.md)
+  : Cosine function for value objects
+
+- [`` `data<-`() ``](https://queelius.github.io/femtograd/reference/data-set.md)
+  : Set the data of a value object
+
+- [`x`](https://queelius.github.io/femtograd/reference/data.md) :
+  Retrieve the data stored by an object.
+
+- [`data(`*`<default>`*`)`](https://queelius.github.io/femtograd/reference/data.default.md)
+  : Default implementation for retrieving the data from a differentiable
+  object
+
+- [`data(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/data.value.md)
+  : Retrieve the value or data from a value object
+
+- [`digamma(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/digamma.value.md)
+  : Digamma (psi) function for value objects
+
+- [`distributions`](https://queelius.github.io/femtograd/reference/distributions.md)
+  : Log-likelihood functions for exponential family distributions
+
+- [`` `-`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/dot-value.md)
+  : Subtraction for value objects
+
+- [`dual`](https://queelius.github.io/femtograd/reference/dual.md) :
+  dual R6 class for forward-mode automatic differentiation
+
+- [`dual_num()`](https://queelius.github.io/femtograd/reference/dual_num.md)
+  : Create a dual number
+
+- [`exp(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/exp.value.md)
+  : Exponential function for value objects
+
+- [`find_mle()`](https://queelius.github.io/femtograd/reference/find_mle.md)
+  : Find MLE with standard errors
+
+- [`fisher_information()`](https://queelius.github.io/femtograd/reference/fisher_information.md)
+  : Compute observed Fisher information matrix
+
+- [`fisher_scoring()`](https://queelius.github.io/femtograd/reference/fisher_scoring.md)
+  : Fisher scoring optimizer
+
+- [`grad()`](https://queelius.github.io/femtograd/reference/grad.md) :
+
+  Gradient of `x` with respect to `e` in `backward(e)`, e.g., dx/de.
+  (applies the chain rule)
+
+- [`grad(`*`<default>`*`)`](https://queelius.github.io/femtograd/reference/grad.default.md)
+  :
+
+  Default gradient is one that does not propograte gradients and is
+  zero.`value` object `x` with respect to `e` in `backward(e)`, e.g.,
+  dx/de. (applies the chain rule)
+
+- [`grad(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/grad.value.md)
+  :
+
+  Gradient of a `value` object `x` with respect to `e` in `backward(e)`,
+  e.g., dx/de. (applies the chain rule)
+
+- [`gradient()`](https://queelius.github.io/femtograd/reference/gradient.md)
+  : Compute gradient as a numeric vector
+
+- [`gradient_ascent()`](https://queelius.github.io/femtograd/reference/gradient_ascent.md)
+  : Gradient ascent/descent optimizer
+
+- [`gradient_descent()`](https://queelius.github.io/femtograd/reference/gradient_descent.md)
+  : Gradient descent (minimize)
+
+- [`hessian()`](https://queelius.github.io/femtograd/reference/hessian.md)
+  : Compute Hessian matrix via forward-over-reverse automatic
+  differentiation
+
+- [`is_dual()`](https://queelius.github.io/femtograd/reference/is_dual.md)
+  : Check if object is a dual number
+
+- [`is_value()`](https://queelius.github.io/femtograd/reference/is_value.md)
+  : Check if an object is of class value
+
+- [`lgamma(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/lgamma.value.md)
+  : Log-gamma function for value objects
+
+- [`log(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/log.value.md)
+  : Natural logarithm for value objects
+
+- [`log1p(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/log1p.value.md)
+  : Log(1+x) for value objects
+
+- [`logit()`](https://queelius.github.io/femtograd/reference/logit.md) :
+  Logit function for value objects
+
+- [`loglik_bernoulli()`](https://queelius.github.io/femtograd/reference/loglik_bernoulli.md)
+  : Bernoulli distribution log-likelihood
+
+- [`loglik_beta()`](https://queelius.github.io/femtograd/reference/loglik_beta.md)
+  : Beta distribution log-likelihood
+
+- [`loglik_binomial()`](https://queelius.github.io/femtograd/reference/loglik_binomial.md)
+  : Binomial distribution log-likelihood
+
+- [`loglik_exponential()`](https://queelius.github.io/femtograd/reference/loglik_exponential.md)
+  : Exponential distribution log-likelihood
+
+- [`loglik_gamma()`](https://queelius.github.io/femtograd/reference/loglik_gamma.md)
+  : Gamma distribution log-likelihood
+
+- [`loglik_logistic()`](https://queelius.github.io/femtograd/reference/loglik_logistic.md)
+  : Logistic regression log-likelihood (binary)
+
+- [`loglik_negbinom()`](https://queelius.github.io/femtograd/reference/loglik_negbinom.md)
+  : Negative binomial log-likelihood
+
+- [`loglik_normal()`](https://queelius.github.io/femtograd/reference/loglik_normal.md)
+  : Normal (Gaussian) log-likelihood
+
+- [`loglik_poisson()`](https://queelius.github.io/femtograd/reference/loglik_poisson.md)
+  : Poisson distribution log-likelihood
+
+- [`mean(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/mean.value.md)
+  : Mean for value objects
+
+- [`newton_raphson()`](https://queelius.github.io/femtograd/reference/newton_raphson.md)
+  : Newton-Raphson optimizer
+
+- [`optimization`](https://queelius.github.io/femtograd/reference/optimization.md)
+  : Optimization routines for maximum likelihood estimation
+
+- [`` `+`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/plus-.value.md)
+  : Addition for value objects
+
+- [`` `^`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/pow-.value.md)
+  : Power operation for value objects.
+
+- [`primal()`](https://queelius.github.io/femtograd/reference/primal.md)
+  : Extract primal from dual or return value unchanged
+
+- [`print(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/print.value.md)
+  : Print value object and its computational graph
+
+- [`relu()`](https://queelius.github.io/femtograd/reference/relu.md) :
+  ReLU (Rectified Linear Unit) activation function for value objects
+
+- [`sigmoid()`](https://queelius.github.io/femtograd/reference/sigmoid.md)
+  : Sigmoid activation function for value objects
+
+- [`sin(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/sin.value.md)
+  : Sine function for value objects
+
+- [`` `/`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/slash-.value.md)
+  : Division for value objects
+
+- [`softplus()`](https://queelius.github.io/femtograd/reference/softplus.md)
+  : Softplus function for value objects
+
+- [`sqrt(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/sqrt.value.md)
+  : Square root for value objects
+
+- [`std_errors()`](https://queelius.github.io/femtograd/reference/std_errors.md)
+  : Compute standard errors from Hessian
+
+- [`sum(`*`<dual>`*`)`](https://queelius.github.io/femtograd/reference/sum.dual.md)
+  : Sum for dual numbers
+
+- [`sum(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/sum.value.md)
+  : Summation for value objects
+
+- [`tangent()`](https://queelius.github.io/femtograd/reference/tangent.md)
+  : Extract tangent from dual or return 0
+
+- [`tanh(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/tanh.value.md)
+  : Hyperbolic tangent activation function for value objects
+
+- [`` `*`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/times-.value.md)
+  : Multiplication for value objects
+
+- [`trigamma(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/trigamma.value.md)
+  : Trigamma function for value objects
+
+- [`val()`](https://queelius.github.io/femtograd/reference/val.md) :
+
+  `value` object constructor
+
+- [`value`](https://queelius.github.io/femtograd/reference/value.md) :
+  value R6 class
+
+- [`vcov_matrix()`](https://queelius.github.io/femtograd/reference/vcov_matrix.md)
+  : Compute variance-covariance matrix from Hessian
+
+- [`wald_test()`](https://queelius.github.io/femtograd/reference/wald_test.md)
+  : Wald test for hypothesis testing
+

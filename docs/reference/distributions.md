@@ -1,0 +1,5 @@
+# Log-likelihood functions for exponential family distributions
+
+These functions compute log-likelihoods that can be differentiated using
+femtograd's automatic differentiation. Each function returns a value
+object suitable for gradient-based optimization.
