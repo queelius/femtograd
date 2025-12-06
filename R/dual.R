@@ -363,10 +363,11 @@ sum.dual <- function(..., na.rm = FALSE)
   total_tangent <- 0
   for (arg in args) {
     if (is_dual(arg)) {
-      total_primal <- total_primal + primal(arg)
-      total_tangent <- total_tangent + tangent(arg)
+      # Use sum() to reduce vector primals/tangents to scalars
+      total_primal <- total_primal + sum(primal(arg), na.rm = na.rm)
+      total_tangent <- total_tangent + sum(tangent(arg), na.rm = na.rm)
     } else {
-      total_primal <- total_primal + arg
+      total_primal <- total_primal + sum(arg, na.rm = na.rm)
     }
   }
   dual_num(total_primal, total_tangent)

@@ -171,3 +171,23 @@ test_that("dual arithmetic with vector primals works", {
   result <- log(d)
   expect_equal(primal(result), log(vec))
 })
+
+test_that("sum.dual reduces vector duals to scalar", {
+  # Regression test: sum() should reduce vector primals/tangents
+  t_vec <- c(1, 2, 3, 4, 5)
+  sigma <- dual_num(2, 1)
+
+  # t_vec / sigma gives dual with vector primal and tangent
+  ratio <- t_vec / sigma
+  expect_equal(length(primal(ratio)), 5)
+  expect_equal(length(tangent(ratio)), 5)
+
+  # sum() should reduce to scalar dual
+  result <- sum(ratio)
+  expect_equal(length(primal(result)), 1)
+  expect_equal(length(tangent(result)), 1)
+
+  # Check values: sum(t/2) = 7.5, d/d_sigma sum(t/sigma) = -sum(t)/sigma^2 = -15/4 = -3.75
+  expect_equal(primal(result), sum(t_vec) / 2)
+  expect_equal(tangent(result), -sum(t_vec) / 4)
+})
