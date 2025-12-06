@@ -33,6 +33,31 @@ test_that("mixed value-scalar operations work", {
   expect_equal(data(x ^ 2), 25)
 })
 
+test_that("scalar-value operations work (scalar first)", {
+  # Regression test: scalar / value was failing with
+  # "$ operator is invalid for atomic vectors"
+  x <- val(3)
+
+  # All these should work with scalar as first operand
+  expect_equal(data(2 + x), 5)
+  expect_equal(data(10 - x), 7)
+  expect_equal(data(4 * x), 12)
+  expect_equal(data(6 / x), 2)
+  expect_equal(data(2 ^ x), 8)
+
+  # Check gradients propagate correctly
+  y <- val(2)
+  z <- 10 / y  # d/dy (10/y) = -10/y^2 = -2.5
+
+  backward(z)
+  expect_equal(grad(y), -2.5)
+
+  # Vector divided by value
+  y <- val(2)
+  result <- c(2, 4, 6) / y
+  expect_equal(data(result), c(1, 2, 3))
+})
+
 test_that("unary negation works", {
   x <- val(5)
   z <- -x

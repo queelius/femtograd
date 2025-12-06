@@ -8,6 +8,8 @@
 #' @export
 `+.value` <- function(e1, e2)
 {
+  if (!is_value(e1))
+    e1 <- val(e1)
   if (!is_value(e2))
     e2 <- val(e2)
   out <- value$new(e1$data + e2$data, list(e1, e2))
@@ -28,6 +30,8 @@
 #' @export
 `*.value` <- function(e1, e2)
 {
+  if (!is_value(e1))
+    e1 <- val(e1)
   if (!is_value(e2))
     e2 <- val(e2)
   out <- value$new(e1$data * e2$data, list(e1, e2))
@@ -48,6 +52,10 @@
 #' @export
 `^.value` <- function(b, e)
 {
+  # Handle scalar base (e.g., 2^val(3))
+  if (!is_value(b))
+    b <- val(b)
+
   if (is_value(e))
   {
     out <- value$new(b$data^e$data, list(b, e))
@@ -180,6 +188,8 @@ exp.value <- function(x)
 #' @export
 `/.value` <- function(x, y)
 {
+  if (!is_value(x))
+    x <- val(x)
   if (!is_value(y))
     y <- val(y)
   out <- value$new(x$data / y$data, list(x, y))
@@ -219,6 +229,8 @@ sqrt.value <- function(x)
 {
   # Handle unary negation
   if (missing(y)) {
+    if (!is_value(x))
+      x <- val(x)
     out <- value$new(-x$data, list(x))
     out$backward_fn <- function() {
       x$grad <<- x$grad - out$grad
@@ -227,7 +239,10 @@ sqrt.value <- function(x)
   }
 
   # Handle binary subtraction
-  y <- if (is_value(y)) y else val(y)
+  if (!is_value(x))
+    x <- val(x)
+  if (!is_value(y))
+    y <- val(y)
   out <- value$new(x$data - y$data, list(x, y))
   out$backward_fn <- function()
   {
