@@ -18,6 +18,6 @@ A value object representing the log-likelihood
 }
 \description{
 Computes the log-likelihood for i.i.d. beta observations.
-L(α,β|x) = n*[log(Γ(α+β)) - log(Γ(α)) - log(Γ(β))] +
-           (α-1)*Σlog(xᵢ) + (β-1)*Σlog(1-xᵢ)
+L(α,β|x) = n*\link{log(Γ(α+β)) - log(Γ(α)) - log(Γ(β))} +
+(α-1)*Σlog(xᵢ) + (β-1)*Σlog(1-xᵢ)
 }
