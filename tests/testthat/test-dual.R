@@ -191,3 +191,114 @@ test_that("sum.dual reduces vector duals to scalar", {
   expect_equal(primal(result), sum(t_vec) / 2)
   expect_equal(tangent(result), -sum(t_vec) / 4)
 })
+
+# Tests for dual numbers with value object primals (Hessian computation path)
+
+test_that("dual tanh with value primal works", {
+  x_primal <- val(0.5)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- tanh(x)
+
+  expect_equal(data(primal(result)), tanh(0.5), tolerance = 1e-10)
+  # tangent = (1 - tanh^2(x)) * tangent_in
+  expected_tangent <- 1 - tanh(0.5)^2
+  expect_equal(data(tangent(result)), expected_tangent, tolerance = 1e-10)
+})
+
+test_that("dual abs with value primal works", {
+  x_primal <- val(-3)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- abs(x)
+
+  expect_equal(data(primal(result)), 3)
+  # tangent = sign(x) * tangent_in = -1
+  expect_equal(data(tangent(result)), -1)
+})
+
+test_that("dual digamma with value primal works", {
+  x_primal <- val(2)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- digamma(x)
+
+  expect_equal(data(primal(result)), digamma(2), tolerance = 1e-10)
+  # tangent = trigamma(x) * tangent_in
+  expect_equal(data(tangent(result)), trigamma(2), tolerance = 1e-10)
+})
+
+test_that("dual log1p with value primal works", {
+  x_primal <- val(0.5)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- log1p(x)
+
+  expect_equal(data(primal(result)), log1p(0.5), tolerance = 1e-10)
+  # tangent = 1/(1+x) * tangent_in
+  expect_equal(data(tangent(result)), 1 / 1.5, tolerance = 1e-10)
+})
+
+test_that("dual sigmoid with value primal works", {
+  x_primal <- val(0)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- sigmoid(x)
+
+  expect_equal(data(primal(result)), 0.5, tolerance = 1e-10)
+  # tangent = s * (1-s) * tangent_in = 0.25
+  expect_equal(data(tangent(result)), 0.25, tolerance = 1e-10)
+})
+
+test_that("dual relu with value primal works", {
+  # Positive input
+  x_primal <- val(3)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- relu(x)
+  expect_equal(data(primal(result)), 3)
+  expect_equal(data(tangent(result)), 1)
+
+  # Negative input
+  x_primal <- val(-3)
+  x <- dual$new(x_primal, x_tangent)
+  result <- relu(x)
+  expect_equal(data(primal(result)), 0)
+  expect_equal(tangent(result), 0)
+})
+
+test_that("dual softplus with value primal works", {
+  x_primal <- val(1)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- softplus(x)
+
+  expect_equal(data(primal(result)), log1p(exp(1)), tolerance = 1e-10)
+  # tangent = sigmoid(x) * tangent_in
+  s <- 1 / (1 + exp(-1))
+  expect_equal(data(tangent(result)), s, tolerance = 1e-10)
+})
+
+test_that("dual logit with value primal works", {
+  x_primal <- val(0.3)
+  x_tangent <- val(1)
+  x <- dual$new(x_primal, x_tangent)
+
+  result <- logit(x)
+
+  expect_equal(data(primal(result)), log(0.3 / 0.7), tolerance = 1e-10)
+  # tangent = 1/(x*(1-x)) * tangent_in
+  expect_equal(data(tangent(result)), 1 / (0.3 * 0.7), tolerance = 1e-10)
+})
+
+test_that("print.dual works", {
+  d <- dual_num(3, 1)
+  expect_output(print(d), "dual")
+})

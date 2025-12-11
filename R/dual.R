@@ -255,7 +255,9 @@ abs.dual <- function(x)
 {
   a <- primal(x)
   da <- tangent(x)
-  tangent_result <- if (is_zero_tangent(da)) 0 else sign(a) * da
+  # sign() doesn't work with value objects, use numeric sign
+  a_sign <- if (is_value(a)) sign(a$data) else sign(a)
+  tangent_result <- if (is_zero_tangent(da)) 0 else a_sign * da
   dual_num(abs(a), tangent_result)
 }
 

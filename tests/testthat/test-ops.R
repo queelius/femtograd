@@ -58,6 +58,57 @@ test_that("scalar-value operations work (scalar first)", {
   expect_equal(data(result), c(1, 2, 3))
 })
 
+test_that("power with value exponent has correct gradient", {
+  # Test the value exponent path (line 64-65 in ops.R)
+  b <- val(2)
+  e <- val(3)
+  z <- b^e
+
+  expect_equal(data(z), 8)
+
+  backward(z)
+  # d/db = e * b^(e-1) = 3 * 4 = 12
+  expect_equal(grad(b), 12)
+  # d/de = log(b) * b^e = log(2) * 8
+  expect_equal(grad(e), log(2) * 8, tolerance = 1e-10)
+})
+
+test_that("sum.value with empty input returns zero", {
+  result <- sum.value()
+  expect_equal(data(result), 0)
+})
+
+test_that("sum.value handles mixed scalars and values", {
+  x <- val(2)
+  y <- val(3)
+  result <- sum(x, 5, y, 10)
+
+  expect_equal(data(result), 20)
+
+  backward(result)
+  expect_equal(grad(x), 1)
+  expect_equal(grad(y), 1)
+})
+
+test_that("mean.value returns input for single value", {
+  x <- val(5)
+  result <- mean(x)
+  expect_equal(data(result), 5)
+})
+
+test_that("mean.value with list of values works", {
+  values <- list(val(2), val(4), val(6))
+  result <- mean.value(values)
+
+  expect_equal(data(result), 4)
+
+  backward(result)
+  # Each input gets gradient 1/n = 1/3
+  expect_equal(grad(values[[1]]), 1/3, tolerance = 1e-10)
+  expect_equal(grad(values[[2]]), 1/3, tolerance = 1e-10)
+  expect_equal(grad(values[[3]]), 1/3, tolerance = 1e-10)
+})
+
 test_that("unary negation works", {
   x <- val(5)
   z <- -x
