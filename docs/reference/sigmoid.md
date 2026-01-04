@@ -1,6 +1,6 @@
 # Sigmoid activation function for value objects
 
-Sigmoid activation function for value objects
+Element-wise sigmoid: 1/(1+exp(-x))
 
 ## Usage
 
@@ -16,4 +16,4 @@ sigmoid(x)
 
 ## Value
 
-A new value object representing sigmoid(x) = 1/(1+exp(-x))
+A new value object representing sigmoid(x)

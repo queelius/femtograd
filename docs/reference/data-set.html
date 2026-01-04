@@ -9,7 +9,7 @@ without breaking the computational graph reference."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">femtograd</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ without breaking the computational graph reference.</p>
 
 
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
-<dd><p>The new numeric value to assign</p></dd>
+<dd><p>The new numeric value to assign (converted to matrix)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -65,7 +65,7 @@ without breaking the computational graph reference.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="val.html">val</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="data.html">data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="data.html">data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>  <span class="co"># Returns 10</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="data.html">data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>  <span class="co"># Returns 1x1 matrix containing 10</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

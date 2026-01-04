@@ -1,7 +1,6 @@
 # Summation for value objects
 
-Overrides base::sum to work with value objects. Supports mixed lists of
-value objects and numeric scalars.
+Sums all elements of value objects, returning a 1x1 value.
 
 ## Usage
 
@@ -14,12 +13,12 @@ sum(..., na.rm = FALSE)
 
 - ...:
 
-  value objects and/or numeric scalars to sum
+  value objects and/or numeric values to sum
 
 - na.rm:
 
-  Logical, whether to remove NA values (passed to base sum for scalars)
+  Logical, whether to remove NA values
 
 ## Value
 
-A new value object representing the sum
+A new value object (1x1 matrix) representing the sum

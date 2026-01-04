@@ -1,7 +1,6 @@
 # Softplus function for value objects
 
-Computes log(1 + exp(x)), a smooth approximation to max(0, x). Useful
-for ensuring positivity of parameters (e.g., variances).
+Element-wise softplus: log(1 + exp(x)).
 
 ## Usage
 

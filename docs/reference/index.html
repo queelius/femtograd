@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">femtograd</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,10 +69,66 @@
 
         <dt>
 
+          <code><a href="bfgs.html">bfgs()</a></code>
+
+        </dt>
+        <dd>BFGS quasi-Newton optimizer</dd>
+
+        <dt>
+
+          <code><a href="bootstrap.html">bootstrap</a></code>
+
+        </dt>
+        <dd>Bootstrap Inference</dd>
+
+        <dt>
+
+          <code><a href="bootstrap_fit.html">bootstrap_fit()</a></code>
+
+        </dt>
+        <dd>Bootstrap standard errors and confidence intervals</dd>
+
+        <dt>
+
+          <code><a href="bounded.html">bounded()</a></code>
+
+        </dt>
+        <dd>Transform to bounded interval</dd>
+
+        <dt>
+
+          <code><a href="check_convergence.html">check_convergence()</a></code>
+
+        </dt>
+        <dd>Check convergence diagnostics</dd>
+
+        <dt>
+
+          <code><a href="check_hessian.html">check_hessian()</a></code>
+
+        </dt>
+        <dd>Check Hessian properties</dd>
+
+        <dt>
+
+          <code><a href="confint.bootstrap_result.html">confint(<i>&lt;bootstrap_result&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Confidence intervals from bootstrap</dd>
+
+        <dt>
+
           <code><a href="confint_mle.html">confint_mle()</a></code>
 
         </dt>
         <dd>Compute confidence intervals from MLE results</dd>
+
+        <dt>
+
+          <code><a href="confint_profile.html">confint_profile()</a></code>
+
+        </dt>
+        <dd>Profile confidence intervals</dd>
 
         <dt>
 
@@ -107,7 +163,14 @@
           <code><a href="data.value.html">data(<i>&lt;value&gt;</i>)</a></code>
 
         </dt>
-        <dd>Retrieve the value or data from a value object</dd>
+        <dd>Retrieve the data matrix from a value object</dd>
+
+        <dt>
+
+          <code><a href="diagnostics.html">diagnostics()</a></code>
+
+        </dt>
+        <dd>Model Diagnostics</dd>
 
         <dt>
 
@@ -122,6 +185,20 @@
 
         </dt>
         <dd>Log-likelihood functions for exponential family distributions</dd>
+
+        <dt>
+
+          <code><a href="div_safe.html">div_safe()</a></code>
+
+        </dt>
+        <dd>Safe division (handles division by zero)</dd>
+
+        <dt>
+
+          <code><a href="dof.html">dof()</a></code>
+
+        </dt>
+        <dd>Extract degrees of freedom from hypothesis test</dd>
 
         <dt>
 
@@ -153,6 +230,20 @@
 
         <dt>
 
+          <code><a href="exp_safe.html">exp_safe()</a></code>
+
+        </dt>
+        <dd>Stable exp function (with overflow protection)</dd>
+
+        <dt>
+
+          <code><a href="femtofit.html">femtofit()</a></code> <code><a href="femtofit.html">coef(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">vcov(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">confint(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">logLik(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">nobs(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">print(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">summary(<i>&lt;femtofit&gt;</i>)</a></code> <code><a href="femtofit.html">print(<i>&lt;summary.femtofit&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Constructor for femtofit objects</dd>
+
+        <dt>
+
           <code><a href="find_mle.html">find_mle()</a></code>
 
         </dt>
@@ -174,6 +265,20 @@
 
         <dt>
 
+          <code><a href="fit.html">fit()</a></code>
+
+        </dt>
+        <dd>Fit a model via maximum likelihood</dd>
+
+        <dt>
+
+          <code><a href="fitting.html">fitting</a></code>
+
+        </dt>
+        <dd>Statistical model fitting with automatic differentiation</dd>
+
+        <dt>
+
           <code><a href="grad.html">grad()</a></code>
 
         </dt>
@@ -184,7 +289,7 @@
           <code><a href="grad.default.html">grad(<i>&lt;default&gt;</i>)</a></code>
 
         </dt>
-        <dd>Default gradient is one that does not propograte gradients and is zero.<code>value</code> object <code>x</code> with respect to <code>e</code> in <code>backward(e)</code>, e.g., dx/de. (applies the chain rule)</dd>
+        <dd>Default gradient is zero matrix</dd>
 
         <dt>
 
@@ -223,10 +328,52 @@
 
         <dt>
 
+          <code><a href="hypothesis_tests.html">hypothesis_tests</a></code>
+
+        </dt>
+        <dd>Hypothesis Testing for Fitted Models</dd>
+
+        <dt>
+
+          <code><a href="inv_bounded.html">inv_bounded()</a></code>
+
+        </dt>
+        <dd>Inverse of bounded transform</dd>
+
+        <dt>
+
+          <code><a href="inv_positive.html">inv_positive()</a></code>
+
+        </dt>
+        <dd>Inverse of positive transform</dd>
+
+        <dt>
+
+          <code><a href="inv_probability.html">inv_probability()</a></code>
+
+        </dt>
+        <dd>Inverse of probability transform</dd>
+
+        <dt>
+
+          <code><a href="inverse_transforms.html">inverse_transforms</a></code>
+
+        </dt>
+        <dd>Inverse transforms for recovering original scale</dd>
+
+        <dt>
+
           <code><a href="is_dual.html">is_dual()</a></code>
 
         </dt>
         <dd>Check if object is a dual number</dd>
+
+        <dt>
+
+          <code><a href="is_significant_at.html">is_significant_at()</a></code>
+
+        </dt>
+        <dd>Check if test is significant at given level</dd>
 
         <dt>
 
@@ -237,10 +384,24 @@
 
         <dt>
 
+          <code><a href="lbfgs.html">lbfgs()</a></code>
+
+        </dt>
+        <dd>L-BFGS optimizer (limited memory BFGS)</dd>
+
+        <dt>
+
           <code><a href="lgamma.value.html">lgamma(<i>&lt;value&gt;</i>)</a></code>
 
         </dt>
         <dd>Log-gamma function for value objects</dd>
+
+        <dt>
+
+          <code><a href="line_search.html">line_search()</a></code>
+
+        </dt>
+        <dd>Backtracking line search (Armijo condition)</dd>
 
         <dt>
 
@@ -255,6 +416,27 @@
 
         </dt>
         <dd>Log(1+x) for value objects</dd>
+
+        <dt>
+
+          <code><a href="log1p_safe.html">log1p_safe()</a></code>
+
+        </dt>
+        <dd>Log1p with underflow protection</dd>
+
+        <dt>
+
+          <code><a href="log_safe.html">log_safe()</a></code>
+
+        </dt>
+        <dd>Safe logarithm (handles zeros)</dd>
+
+        <dt>
+
+          <code><a href="log_sigmoid.html">log_sigmoid()</a></code>
+
+        </dt>
+        <dd>Log-sigmoid (numerically stable)</dd>
 
         <dt>
 
@@ -321,10 +503,45 @@
 
         <dt>
 
+          <code><a href="loglik_pareto.html">loglik_pareto()</a></code>
+
+        </dt>
+        <dd>Pareto distribution log-likelihood</dd>
+
+        <dt>
+
           <code><a href="loglik_poisson.html">loglik_poisson()</a></code>
 
         </dt>
         <dd>Poisson distribution log-likelihood</dd>
+
+        <dt>
+
+          <code><a href="loglik_weibull.html">loglik_weibull()</a></code>
+
+        </dt>
+        <dd>Weibull distribution log-likelihood</dd>
+
+        <dt>
+
+          <code><a href="logsumexp.html">logsumexp()</a></code>
+
+        </dt>
+        <dd>Log-Sum-Exp (numerically stable)</dd>
+
+        <dt>
+
+          <code><a href="lower_bounded.html">lower_bounded()</a></code>
+
+        </dt>
+        <dd>Transform to lower-bounded interval</dd>
+
+        <dt>
+
+          <code><a href="lrt.html">lrt()</a></code>
+
+        </dt>
+        <dd>Likelihood Ratio Test</dd>
 
         <dt>
 
@@ -342,6 +559,13 @@
 
         <dt>
 
+          <code><a href="observed_info.html">observed_info()</a></code>
+
+        </dt>
+        <dd>Observed Fisher information matrix</dd>
+
+        <dt>
+
           <code><a href="optimization.html">optimization</a></code>
 
         </dt>
@@ -349,10 +573,24 @@
 
         <dt>
 
+          <code><a href="plot.profile_likelihood.html">plot(<i>&lt;profile_likelihood&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Plot profile likelihood</dd>
+
+        <dt>
+
           <code><a href="plus-.value.html">`+`(<i>&lt;value&gt;</i>)</a></code>
 
         </dt>
         <dd>Addition for value objects</dd>
+
+        <dt>
+
+          <code><a href="positive.html">positive()</a></code>
+
+        </dt>
+        <dd>Transform to positive values</dd>
 
         <dt>
 
@@ -370,6 +608,34 @@
 
         <dt>
 
+          <code><a href="print.bootstrap_result.html">print(<i>&lt;bootstrap_result&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print method for bootstrap results</dd>
+
+        <dt>
+
+          <code><a href="print.hessian_check.html">print(<i>&lt;hessian_check&gt;</i>)</a></code> <code><a href="print.hessian_check.html">print(<i>&lt;convergence_check&gt;</i>)</a></code> <code><a href="print.hessian_check.html">print(<i>&lt;model_diagnostics&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print methods for diagnostic objects</dd>
+
+        <dt>
+
+          <code><a href="print.likelihood_ratio_test.html">print(<i>&lt;likelihood_ratio_test&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print method for likelihood ratio test</dd>
+
+        <dt>
+
+          <code><a href="print.profile_likelihood.html">print(<i>&lt;profile_likelihood&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print method for profile likelihood</dd>
+
+        <dt>
+
           <code><a href="print.value.html">print(<i>&lt;value&gt;</i>)</a></code>
 
         </dt>
@@ -377,10 +643,59 @@
 
         <dt>
 
+          <code><a href="print.wald_test.html">print(<i>&lt;wald_test&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print method for Wald test</dd>
+
+        <dt>
+
+          <code><a href="probability.html">probability()</a></code>
+
+        </dt>
+        <dd>Transform to probability values</dd>
+
+        <dt>
+
+          <code><a href="profile_likelihood.html">profile_likelihood</a></code>
+
+        </dt>
+        <dd>Profile Likelihood</dd>
+
+        <dt>
+
+          <code><a href="profile_loglik.html">profile_loglik()</a></code>
+
+        </dt>
+        <dd>Compute profile likelihood for a parameter</dd>
+
+        <dt>
+
+          <code><a href="pval.html">pval()</a></code>
+
+        </dt>
+        <dd>Extract p-value from hypothesis test</dd>
+
+        <dt>
+
           <code><a href="relu.html">relu()</a></code>
 
         </dt>
-        <dd>ReLU (Rectified Linear Unit) activation function for value objects</dd>
+        <dd>ReLU activation function for value objects</dd>
+
+        <dt>
+
+          <code><a href="se.html">se()</a></code>
+
+        </dt>
+        <dd>Standard errors from a fitted model</dd>
+
+        <dt>
+
+          <code><a href="se_reliable.html">se_reliable()</a></code>
+
+        </dt>
+        <dd>Check if standard errors are reliable</dd>
 
         <dt>
 
@@ -388,6 +703,13 @@
 
         </dt>
         <dd>Sigmoid activation function for value objects</dd>
+
+        <dt>
+
+          <code><a href="sigmoid_stable.html">sigmoid_stable()</a></code>
+
+        </dt>
+        <dd>Stable sigmoid function</dd>
 
         <dt>
 
@@ -405,6 +727,13 @@
 
         <dt>
 
+          <code><a href="softmax.html">softmax()</a></code>
+
+        </dt>
+        <dd>Softmax function (numerically stable)</dd>
+
+        <dt>
+
           <code><a href="softplus.html">softplus()</a></code>
 
         </dt>
@@ -416,6 +745,13 @@
 
         </dt>
         <dd>Square root for value objects</dd>
+
+        <dt>
+
+          <code><a href="stability.html">stability</a></code>
+
+        </dt>
+        <dd>Numerical stability utilities for automatic differentiation</dd>
 
         <dt>
 
@@ -440,6 +776,13 @@
 
         <dt>
 
+          <code><a href="summary.bootstrap_result.html">summary(<i>&lt;bootstrap_result&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summary for bootstrap results</dd>
+
+        <dt>
+
           <code><a href="tangent.html">tangent()</a></code>
 
         </dt>
@@ -450,7 +793,14 @@
           <code><a href="tanh.value.html">tanh(<i>&lt;value&gt;</i>)</a></code>
 
         </dt>
-        <dd>Hyperbolic tangent activation function for value objects</dd>
+        <dd>Hyperbolic tangent for value objects</dd>
+
+        <dt>
+
+          <code><a href="test_stat.html">test_stat()</a></code>
+
+        </dt>
+        <dd>Extract test statistic from hypothesis test</dd>
 
         <dt>
 
@@ -461,10 +811,24 @@
 
         <dt>
 
+          <code><a href="transforms.html">transforms</a></code>
+
+        </dt>
+        <dd>Parameter Transformation Helpers</dd>
+
+        <dt>
+
           <code><a href="trigamma.value.html">trigamma(<i>&lt;value&gt;</i>)</a></code>
 
         </dt>
         <dd>Trigamma function for value objects</dd>
+
+        <dt>
+
+          <code><a href="upper_bounded.html">upper_bounded()</a></code>
+
+        </dt>
+        <dd>Transform to upper-bounded interval</dd>
 
         <dt>
 
@@ -492,7 +856,7 @@
           <code><a href="wald_test.html">wald_test()</a></code>
 
         </dt>
-        <dd>Wald test for hypothesis testing</dd>
+        <dd>Wald Test for Model Parameters</dd>
       </dl></div>
   </main></div>
 

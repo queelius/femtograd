@@ -17,7 +17,7 @@ data(x) <- value
 
 - value:
 
-  The new numeric value to assign
+  The new numeric value to assign (converted to matrix)
 
 ## Value
 
@@ -29,6 +29,6 @@ The modified value object (invisibly)
 if (FALSE) { # \dontrun{
 x <- val(5)
 data(x) <- 10
-data(x)  # Returns 10
+data(x)  # Returns 1x1 matrix containing 10
 } # }
 ```

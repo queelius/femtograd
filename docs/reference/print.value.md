@@ -6,7 +6,7 @@ Print value object and its computational graph
 
 ``` r
 # S3 method for class 'value'
-print(v, depth = Inf, indent = "  ")
+print(v, depth = Inf, indent = "  ", ...)
 ```
 
 ## Arguments
@@ -17,7 +17,7 @@ print(v, depth = Inf, indent = "  ")
 
 - depth:
 
-  Integer indicates depth (dfs) to recursve down the graph
+  Integer indicates depth (dfs) to recurse down the graph
 
 - indent:
 

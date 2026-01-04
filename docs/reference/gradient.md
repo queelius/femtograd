@@ -21,4 +21,4 @@ gradient(loss_fn, params)
 
 ## Value
 
-A numeric vector of gradients
+A numeric vector of gradients (one per parameter)

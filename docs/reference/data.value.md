@@ -1,12 +1,12 @@
-# Retrieve the value or data from a value object
+# Retrieve the data matrix from a value object
 
-Retrieve the value or data from a value object
+Retrieve the data matrix from a value object
 
 ## Usage
 
 ``` r
 # S3 method for class 'value'
-data(x, ...)
+data(x, drop = TRUE, ...)
 ```
 
 ## Arguments
@@ -15,10 +15,15 @@ data(x, ...)
 
   A value object
 
+- drop:
+
+  If TRUE (default) and result is 1x1, return scalar. Set to FALSE to
+  always return a matrix.
+
 - ...:
 
   additional arguments to pass
 
 ## Value
 
-The value or data of the value object
+The data as scalar (if 1x1 and drop=TRUE) or matrix

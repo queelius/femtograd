@@ -22,4 +22,4 @@ data(x, ...)
 
 ## Value
 
-The original object
+The original object converted to matrix

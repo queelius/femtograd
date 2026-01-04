@@ -1,6 +1,7 @@
 # Power operation for value objects.
 
-Power operation for value objects.
+Element-wise power operation. Supports broadcasting when one operand is
+a 1x1 scalar matrix.
 
 ## Usage
 
@@ -13,12 +14,12 @@ b^e
 
 - b:
 
-  A value object as the base
+  A value object or numeric (base)
 
 - e:
 
-  A value object, a scalar, or a numeric constant as the exponent
+  A value object or numeric (exponent)
 
 ## Value
 
-A new value object representing the power b^e
+A new value object representing the element-wise power b^e

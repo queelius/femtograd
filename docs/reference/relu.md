@@ -1,6 +1,6 @@
-# ReLU (Rectified Linear Unit) activation function for value objects
+# ReLU activation function for value objects
 
-ReLU (Rectified Linear Unit) activation function for value objects
+Element-wise ReLU: max(0, x)
 
 ## Usage
 

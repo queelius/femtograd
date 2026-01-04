@@ -7,12 +7,12 @@
 
 ## Citation
 
-Towell A (2025). *femtograd: Like Micrograd, But Worse*. R package
-version 0.9000.
+Towell A (2026). *femtograd: Automatic Differentiation for Statistical
+Computing*. R package version 0.3.0.
 
     @Manual{,
-      title = {femtograd: Like Micrograd, But Worse},
+      title = {femtograd: Automatic Differentiation for Statistical Computing},
       author = {Alexander Towell},
-      year = {2025},
-      note = {R package version 0.9000},
+      year = {2026},
+      note = {R package version 0.3.0},
     }

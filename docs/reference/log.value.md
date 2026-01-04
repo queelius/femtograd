@@ -1,12 +1,12 @@
 # Natural logarithm for value objects
 
-Natural logarithm for value objects
+Element-wise natural logarithm.
 
 ## Usage
 
 ``` r
 # S3 method for class 'value'
-log(x)
+log(x, ...)
 ```
 
 ## Arguments
@@ -17,4 +17,4 @@ log(x)
 
 ## Value
 
-A new value object representing the natural logarithm of x
+A new value object representing log(x)

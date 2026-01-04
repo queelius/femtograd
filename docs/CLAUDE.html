@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">femtograd</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,9 +46,9 @@
 <ul><li>
 <strong>value</strong>: R6 class representing nodes. Each node stores:
 <ul><li>
-<code>data</code>: The numeric value</li>
+<code>data</code>: Numeric matrix (all values are matrices internally)</li>
 <li>
-<code>grad</code>: Gradient computed during backpropagation</li>
+<code>grad</code>: Gradient matrix (same dimensions as data)</li>
 <li>
 <code>backward_fn</code>: Function defining local gradient computation</li>
 <li>
@@ -71,15 +71,17 @@
 </ol></li>
 </ul></div>
 <div class="section level3">
-<h3 id="statistical-functions-rdistributionsr-roptimizer">Statistical Functions (R/distributions.R, R/optimize.R)<a class="anchor" aria-label="anchor" href="#statistical-functions-rdistributionsr-roptimizer"></a></h3>
+<h3 id="statistical-functions-rdistributionsr-roptimizer-rfitr">Statistical Functions (R/distributions.R, R/optimize.R, R/fit.R)<a class="anchor" aria-label="anchor" href="#statistical-functions-rdistributionsr-roptimizer-rfitr"></a></h3>
 <ul><li>
 <strong>Log-likelihoods</strong>: <code>loglik_normal</code>, <code>loglik_exponential</code>, <code>loglik_poisson</code>, <code>loglik_binomial</code>, <code>loglik_gamma</code>, <code>loglik_beta</code>
 </li>
 <li>
-<strong>Optimization</strong>: <code>gradient_ascent</code>, <code>gradient_descent</code>, <code>newton_raphson</code>, <code>find_mle</code>
+<strong>Optimization</strong>: <code>gradient_ascent</code>, <code>gradient_descent</code>, <code>newton_raphson</code>, <code>bfgs</code>, <code>lbfgs</code>
 </li>
 <li>
-<strong>Inference</strong>: <code>fisher_information</code>, <code>std_errors</code>, <code>vcov_matrix</code>, <code>confint_mle</code>, <code>wald_test</code>
+<strong>Model fitting</strong>: <code><a href="reference/fit.html">fit()</a></code> returns <code>femtofit</code> object with standard R generics</li>
+<li>
+<strong>Inference</strong>: <code><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef()</a></code>, <code><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov()</a></code>, <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code>, <code><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik()</a></code>, <code><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">AIC()</a></code>, <code><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">BIC()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>
 </li>
 </ul></div>
 </div>
@@ -97,7 +99,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Test files: - <code>test-ops.R</code>: Arithmetic, transcendentals, activation functions - <code>test-numerical-gradients.R</code>: Gradient validation via finite differences - <code>test-math-ops.R</code>: lgamma, digamma, sin, cos, etc. - <code>test-dual.R</code>: Forward-mode AD and dual number operations - <code>test-hessian.R</code>: Hessian computation - <code>test-distributions.R</code>: Log-likelihood functions - <code>test-optimize.R</code>: Optimization and MLE routines</p>
+<p>Test files: - <code>test-ops.R</code>: Arithmetic, transcendentals, activation functions - <code>test-numerical-gradients.R</code>: Gradient validation via finite differences - <code>test-math-ops.R</code>: lgamma, digamma, sin, cos, etc. - <code>test-dual.R</code>: Forward-mode AD and dual number operations - <code>test-hessian.R</code>: Hessian computation - <code>test-distributions.R</code>: Log-likelihood functions - <code>test-optimize.R</code>: Optimization and MLE routines - <code>test-fit.R</code>: fit() function and femtofit class with R generics - <code>test-analytical.R</code>: Known gradients/Hessians (power rule, chain rule, etc.) - <code>test-stability.R</code>: Numerical stability utilities (logsumexp, softmax, etc.)</p>
 </div>
 </div>
 <div class="section level2">
@@ -106,6 +108,10 @@
 <strong>Pedagogy over performance</strong>: Code is written for clarity, not speed</li>
 <li>
 <strong>Statistics focus</strong>: Designed for MLE, Hessians, and inference rather than deep learning</li>
+<li>
+<strong>Base R generics</strong>: Uses standard R generics (<code>coef</code>, <code>vcov</code>, <code>confint</code>, <code>logLik</code>) for interoperability</li>
+<li>
+<strong>Matrix representation</strong>: All values are matrices internally (see DESIGN.md)</li>
 <li>
 <strong>Graph Construction</strong>: Operations automatically build computational graphs</li>
 <li>
@@ -116,17 +122,36 @@
 <div class="section level2">
 <h2 id="important-implementation-details">Important Implementation Details<a class="anchor" aria-label="anchor" href="#important-implementation-details"></a></h2>
 <div class="section level3">
-<h3 id="operator-dispatch-limitation">Operator Dispatch Limitation<a class="anchor" aria-label="anchor" href="#operator-dispatch-limitation"></a></h3>
-<p>R dispatches S3 methods based on the <strong>first</strong> argument. This means:</p>
+<h3 id="matrix-representation">Matrix Representation<a class="anchor" aria-label="anchor" href="#matrix-representation"></a></h3>
+<p>All data is stored as matrices (see DESIGN.md for rationale): - Scalars are 1×1 matrices - Vectors are n×1 column matrices - Matrices are m×n matrices</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>           <span class="co"># 1×1 matrix internally</span></span>
+<span><span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>    <span class="co"># 3×1 column matrix internally</span></span>
+<span><span class="fu"><a href="reference/data.html">data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>          <span class="co"># Returns scalar for 1×1 (drop=TRUE default)</span></span>
+<span><span class="fu"><a href="reference/data.html">data</a></span><span class="op">(</span><span class="va">x</span>, drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Always returns matrix</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="broadcasting">Broadcasting<a class="anchor" aria-label="anchor" href="#broadcasting"></a></h3>
+<p>Scalar (1×1) matrices broadcast over larger matrices:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>           <span class="co"># 1×1</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span>    <span class="co"># 3×1</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">*</span> <span class="va">x</span>            <span class="co"># 3×1: c(2,4,6)</span></span>
+<span><span class="fu"><a href="reference/backward.html">backward</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>  <span class="co"># Scalar: sum of gradients = 6</span></span>
+<span><span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>  <span class="co"># 3×1: c(2,2,2)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="operator-dispatch">Operator Dispatch<a class="anchor" aria-label="anchor" href="#operator-dispatch"></a></h3>
+<p>R dispatches S3 methods based on the <strong>first</strong> argument. However, femtograd now handles both orderings:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">*</span> <span class="fl">2</span>     <span class="co"># Works: dispatches to *.value</span></span>
-<span><span class="fl">2</span> <span class="op">*</span> <span class="va">x</span>     <span class="co"># FAILS: dispatches to *.default (numeric)</span></span></code></pre></div>
-<p>Always put the <code>value</code> object first in binary operations.</p>
+<span><span class="fl">2</span> <span class="op">*</span> <span class="va">x</span>     <span class="co"># Also works: scalar is converted to value internally</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="gradient-update-pattern">Gradient Update Pattern<a class="anchor" aria-label="anchor" href="#gradient-update-pattern"></a></h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># WRONG: Creates new value, breaks graph</span></span>
 <span><span class="va">rate</span> <span class="op">&lt;-</span> <span class="va">rate</span> <span class="op">+</span> <span class="va">lr</span> <span class="op">*</span> <span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span></span>
 <span></span>
@@ -135,7 +160,7 @@
 </div>
 <div class="section level3">
 <h3 id="hessian-computation">Hessian Computation<a class="anchor" aria-label="anchor" href="#hessian-computation"></a></h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">loss_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">mu</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span>  <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
@@ -146,12 +171,51 @@
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/std_errors.html">std_errors</a></span><span class="op">(</span><span class="va">H</span>, is_loglik <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="finding-mle-with-standard-errors">Finding MLE with Standard Errors<a class="anchor" aria-label="anchor" href="#finding-mle-with-standard-errors"></a></h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<h3 id="finding-mle-with-standard-errors-recommended">Finding MLE with Standard Errors (Recommended)<a class="anchor" aria-label="anchor" href="#finding-mle-with-standard-errors-recommended"></a></h3>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define log-likelihood with named parameters</span></span>
+<span><span class="co"># Use log-parameterization for constrained parameters (e.g., sigma &gt; 0)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>, <span class="va">log_sigma</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">log_sigma</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="reference/loglik_normal.html">loglik_normal</a></span><span class="op">(</span><span class="va">mu</span>, <span class="va">sigma</span>, <span class="va">data</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mu <span class="op">=</span> <span class="fl">0</span>, log_sigma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Standard R generics</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>      <span class="co"># Named parameter estimates</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>      <span class="co"># Variance-covariance matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>   <span class="co"># 95% confidence intervals</span></span>
+<span><span class="fu"><a href="reference/se.html">se</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>        <span class="co"># Standard errors</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>    <span class="co"># Log-likelihood (works with AIC/BIC)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">AIC</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>       <span class="co"># Akaike information criterion</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>   <span class="co"># Full summary with z-values and p-values</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="alternative-low-level-find_mle">Alternative: Low-level find_mle()<a class="anchor" aria-label="anchor" href="#alternative-low-level-find_mle"></a></h3>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_mle.html">find_mle</a></span><span class="op">(</span><span class="va">loglik_fn</span>, <span class="va">initial_params</span><span class="op">)</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">estimate</span>  <span class="co"># MLE values</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">se</span>        <span class="co"># Standard errors</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">vcov</span>      <span class="co"># Variance-covariance matrix</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="parameter-constraints">Parameter Constraints<a class="anchor" aria-label="anchor" href="#parameter-constraints"></a></h3>
+<p>For constrained parameters, use transformations:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># sigma &gt; 0: use log_sigma, then exp(log_sigma) in likelihood</span></span>
+<span><span class="co"># 0 &lt; p &lt; 1: use logit_p, then sigmoid(logit_p) in likelihood</span></span>
+<span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">mu</span>, <span class="va">log_sigma</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">log_sigma</span><span class="op">)</span>  <span class="co"># Ensures sigma &gt; 0</span></span>
+<span>    <span class="fu"><a href="reference/loglik_normal.html">loglik_normal</a></span><span class="op">(</span><span class="va">mu</span>, <span class="va">sigma</span>, <span class="va">data</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mu <span class="op">=</span> <span class="fl">0</span>, log_sigma <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To get sigma estimate: exp(coef(result)["log_sigma"])</span></span></code></pre></div>
 </div>
 </div>
 </div>

@@ -20,4 +20,4 @@ data(x, ...)
 
 ## Value
 
-The value or data of a differnetiable object
+The data matrix of the value object

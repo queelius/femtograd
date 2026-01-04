@@ -1,6 +1,7 @@
 # Division for value objects
 
-Division for value objects
+Element-wise division. Supports broadcasting when one operand is a 1x1
+scalar matrix.
 
 ## Usage
 
@@ -13,12 +14,12 @@ x/y
 
 - x:
 
-  A value object (numerator)
+  A value object or numeric (numerator)
 
 - y:
 
-  A value object or a scalar (denominator)
+  A value object or numeric (denominator)
 
 ## Value
 
-A new value object representing the division x / y
+A new value object representing x / y

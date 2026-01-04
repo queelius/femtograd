@@ -1,6 +1,7 @@
 # `value` object constructor
 
-`value` object constructor
+Creates a new value node in the computational graph with automatic
+differentiation. Input is converted to matrix representation internally.
 
 ## Usage
 
@@ -12,12 +13,22 @@ val(data, label = "")
 
 - data:
 
-  Numeric value of the object
+  Numeric value (scalar, vector, or matrix)
 
 - label:
 
   Optional character label for debugging
 
-  Represents a value node in the computational graph with automatic
-  differentiation. This constructor function creates a new value object
-  with the specified data and optional label.
+## Value
+
+A value object
+
+## Details
+
+All values are stored as matrices internally:
+
+- `val(5)` creates a 1x1 matrix
+
+- `val(c(1,2,3))` creates a 3x1 column vector
+
+- `val(matrix(...))` preserves matrix dimensions

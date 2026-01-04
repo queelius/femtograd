@@ -7,7 +7,7 @@ e.g., dx/de. (applies the chain rule)
 
 ``` r
 # S3 method for class 'value'
-grad(x, ...)
+grad(x, drop = TRUE, ...)
 ```
 
 ## Arguments
@@ -16,10 +16,15 @@ grad(x, ...)
 
   A value object
 
+- drop:
+
+  If TRUE (default) and result is 1x1, return scalar. Set to FALSE to
+  always return a matrix.
+
 - ...:
 
   pass additional arguments
 
 ## Value
 
-The value or data of the value object
+The gradient as scalar (if 1x1 and drop=TRUE) or matrix

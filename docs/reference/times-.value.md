@@ -1,6 +1,7 @@
 # Multiplication for value objects
 
-Multiplication for value objects
+Element-wise multiplication of two value objects or a value and numeric.
+Supports broadcasting when one operand is a 1x1 scalar matrix.
 
 ## Usage
 
@@ -13,12 +14,12 @@ e1 * e2
 
 - e1:
 
-  A value object
+  A value object or numeric
 
 - e2:
 
-  A value object or a scalar
+  A value object or numeric
 
 ## Value
 
-A new value object representing the product
+A new value object representing the element-wise product

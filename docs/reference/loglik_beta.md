@@ -1,7 +1,7 @@
 # Beta distribution log-likelihood
 
 Computes the log-likelihood for i.i.d. beta observations. L(α,β\|x) =
-n\*\[log(Γ(α+β)) - log(Γ(α)) - log(Γ(β))\] + (α-1)\*Σlog(xᵢ) +
+n\*log(Γ(α+β)) - log(Γ(α)) - log(Γ(β)) + (α-1)\*Σlog(xᵢ) +
 (β-1)\*Σlog(1-xᵢ)
 
 ## Usage

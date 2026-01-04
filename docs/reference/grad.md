@@ -21,4 +21,4 @@ grad(x, ...)
 
 ## Value
 
-The gradient as previously defined
+The gradient matrix (same dimensions as data)

@@ -1,6 +1,7 @@
 # Subtraction for value objects
 
-Subtraction for value objects
+Element-wise subtraction or unary negation. Supports broadcasting when
+one operand is a 1x1 scalar matrix.
 
 ## Usage
 
@@ -13,12 +14,12 @@ x - NULL
 
 - x:
 
-  A value object (minuend)
+  A value object or numeric (minuend)
 
 - y:
 
-  A value object or a scalar (subtrahend)
+  A value object or numeric (subtrahend), or NULL for unary negation
 
 ## Value
 
-A new value object representing the subtraction x - y
+A new value object representing x - y or -x

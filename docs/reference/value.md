@@ -7,18 +7,31 @@ value R6 class
 ## Details
 
 Represents a node in the computational graph with automatic
-differentiation. Each value object holds data, gradient, a backward
-function, previous nodes, and an optional label for debugging.
+differentiation. Each value object holds data as a matrix, gradient as a
+matrix of the same dimensions, a backward function, previous nodes, and
+an optional label.
+
+All data in femtograd uses matrix representation:
+
+- Scalars are 1x1 matrices
+
+- Column vectors are n x 1 matrices
+
+- Row vectors are 1 x n matrices
+
+- Matrices are m x n matrices
+
+This ensures consistent behavior for data(), grad(), and hessian().
 
 ## Public fields
 
 - `data`:
 
-  Numeric value of the object
+  Numeric matrix containing the value
 
 - `grad`:
 
-  Gradient value, initially set to 0
+  Gradient matrix (same dimensions as data), initially zeros
 
 - `backward_fn`:
 
@@ -55,7 +68,8 @@ and optional label.
 
 - `data`:
 
-  Numeric value of the object
+  Numeric value (scalar, vector, or matrix) - will be converted to
+  matrix
 
 - `children`:
 

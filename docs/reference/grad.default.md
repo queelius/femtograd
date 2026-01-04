@@ -1,8 +1,6 @@
-# Default gradient is one that does not propograte gradients and is zero.`value` object `x` with respect to `e` in `backward(e)`, e.g., dx/de. (applies the chain rule)
+# Default gradient is zero matrix
 
-Default gradient is one that does not propograte gradients and is
-zero.`value` object `x` with respect to `e` in `backward(e)`, e.g.,
-dx/de. (applies the chain rule)
+Default gradient is zero matrix
 
 ## Usage
 
@@ -15,7 +13,7 @@ grad(x, ...)
 
 - x:
 
-  A value object
+  A non-value object
 
 - ...:
 
@@ -23,4 +21,4 @@ grad(x, ...)
 
 ## Value
 
-The value or data of the value object
+Zero matrix of appropriate dimensions

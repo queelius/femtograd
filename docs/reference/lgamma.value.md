@@ -1,7 +1,6 @@
 # Log-gamma function for value objects
 
-Computes log(gamma(x)), essential for many statistical distributions
-(Poisson, binomial, gamma, beta, etc.)
+Element-wise log(gamma(x)).
 
 ## Usage
 

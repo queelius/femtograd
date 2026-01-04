@@ -1,6 +1,6 @@
-# Hyperbolic tangent activation function for value objects
+# Hyperbolic tangent for value objects
 
-Hyperbolic tangent activation function for value objects
+Element-wise tanh.
 
 ## Usage
 

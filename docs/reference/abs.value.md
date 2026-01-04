@@ -1,6 +1,6 @@
 # Absolute value for value objects
 
-Absolute value for value objects
+Element-wise absolute value.
 
 ## Usage
 

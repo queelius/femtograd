@@ -1,6 +1,6 @@
 # Cosine function for value objects
 
-Cosine function for value objects
+Element-wise cosine.
 
 ## Usage
 

@@ -1,7 +1,6 @@
 # Logit function for value objects
 
-Computes log(p/(1-p)), the log-odds transformation. Maps probabilities
-(0,1) to real line (-inf, inf).
+Element-wise logit: log(p/(1-p)).
 
 ## Usage
 
@@ -13,7 +12,7 @@ logit(x)
 
 - x:
 
-  A value object representing a probability
+  A value object representing probabilities
 
 ## Value
 

@@ -1,6 +1,6 @@
 # Sine function for value objects
 
-Sine function for value objects
+Element-wise sine.
 
 ## Usage
 

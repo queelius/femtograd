@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Like Micrograd, But Worse • femtograd</title>
+<title>Automatic Differentiation for Statistical Computing • femtograd</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Like Micrograd, But Worse">
-<meta name="description" content="Let's you construct differentiable expressions using auto differentiation.">
-<meta property="og:description" content="Let's you construct differentiable expressions using auto differentiation.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Automatic Differentiation for Statistical Computing">
+<meta name="description" content="Provides automatic differentiation via reverse-mode AD (backpropagation) for first-order gradients and forward-over-reverse AD for Hessian computation. Includes log-likelihood functions for exponential family distributions (normal, exponential, Poisson, binomial, gamma, beta, negative binomial, Weibull, Pareto), MLE optimization via fit() with base R generics (coef, vcov, confint, logLik, AIC/BIC), hypothesis testing (likelihood ratio, Wald), profile likelihood, bootstrap inference, and model diagnostics. Designed for pedagogy and modern statistics rather than large-scale ML.">
+<meta property="og:description" content="Provides automatic differentiation via reverse-mode AD (backpropagation) for first-order gradients and forward-over-reverse AD for Hessian computation. Includes log-likelihood functions for exponential family distributions (normal, exponential, Poisson, binomial, gamma, beta, negative binomial, Weibull, Pareto), MLE optimization via fit() with base R generics (coef, vcov, confint, logLik, AIC/BIC), hypothesis testing (likelihood ratio, Wald), profile likelihood, bootstrap inference, and model diagnostics. Designed for pedagogy and modern statistics rather than large-scale ML.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">femtograd</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,97 +47,186 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="femtograd">femtograd<a class="anchor" aria-label="anchor" href="#femtograd"></a>
 </h1></div>
-<ul>
-<li><a href="#exponential-distribution" id="toc-exponential-distribution">Exponential distribution</a></li>
-<li><a href="#automatic-differentiation-ad" id="toc-automatic-differentiation-ad">Automatic differentiation (AD)</a></li>
-</ul>
-<p>Here’s a quick demonstration of how to use the <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a> R package.</p>
-<p>Load it like this:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">femtograd</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'femtograd'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     data</span></span></code></pre></div>
+<p>Automatic differentiation for statistical computing in R.</p>
+<p><code>femtograd</code> provides reverse-mode AD (backpropagation) for first-order gradients and forward-over-reverse AD for Hessian computation. Designed for <strong>pedagogy and modern statistics</strong> rather than large-scale ML.</p>
 <div class="section level2">
-<h2 id="exponential-distribution">Exponential distribution<a class="anchor" aria-label="anchor" href="#exponential-distribution"></a>
+<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
 </h2>
-<p>Let’s create a simple loglikelihood function for the exponential distribution paramterized by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math> (failure rate).</p>
-<p>We have</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><msub><mi>T</mi><mi>i</mi></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">|</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>λ</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>λ</mi><msub><mi>t</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
-  f_{T_i}(t_i | \lambda) = \lambda \exp(-\lambda t_i).
-</annotation></semantics></math></p>
-<p>So, the loglikelihood function is just</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>ℓ</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>n</mi><mo>log</mo><mi>λ</mi><mo>−</mo><mi>λ</mi><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>t</mi><mi>i</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
-  \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
-</annotation></semantics></math></p>
-<p>Let’s generate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>30</mn></mrow><annotation encoding="application/x-tex">n=30</annotation></semantics></math> observations.</p>
+<ul>
+<li>
+<strong>Reverse-mode AD</strong>: Efficient gradient computation via backpropagation</li>
+<li>
+<strong>Forward-over-reverse AD</strong>: Second-order derivatives (Hessians) for Newton-Raphson and Fisher information</li>
+<li>
+<strong>Log-likelihood functions</strong>: Exponential family distributions (normal, exponential, Poisson, binomial, gamma, beta, negative binomial, logistic, Bernoulli)</li>
+<li>
+<strong>MLE optimization</strong>: Gradient ascent/descent, Newton-Raphson, BFGS, L-BFGS with line search</li>
+<li>
+<strong>Statistical inference</strong>: Standard errors, variance-covariance matrices, confidence intervals, Wald tests</li>
+<li>
+<strong>Numerical stability</strong>: logsumexp, softmax, safe log/division, overflow protection</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install from GitHub</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"queelius/femtograd"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
-<span><span class="va">true_rate</span> <span class="op">&lt;-</span> <span class="fl">7.3</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">true_rate</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.102432677 0.009849689 0.037429092 0.093926112 0.033046038 0.181780460</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">femtograd</span><span class="op">)</span></span>
 <span></span>
-<span><span class="op">(</span><span class="va">mle.rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 6.245535</span></span></code></pre></div>
-<p>We see that the MLE <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat\theta</annotation></semantics></math> is 6.2455349.</p>
+<span><span class="co"># Generate exponential data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="fl">100</span>, rate <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define log-likelihood</span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="reference/loglik_exponential.html">loglik_exponential</a></span><span class="op">(</span><span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Find MLE with standard errors</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_mle.html">find_mle</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"newton"</span><span class="op">)</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">estimate</span>  <span class="co"># MLE</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">se</span>        <span class="co"># Standard errors</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level1">
-<h1 id="automatic-differentiation-ad">Automatic differentiation (AD)<a class="anchor" aria-label="anchor" href="#automatic-differentiation-ad"></a>
-</h1>
-<p>Finding the value (argmax) that maximizes the log-likelihood function is trivial to solve in this case, and it has a closed-form solution. However, to demonstrate the use of <code>femtograd</code>, we will construct a <code>loglike_exp</code> function generator that returns an object that can be automatically differentiated (AD) using backpropogation, which is an efficient way of applying the chain-rule to expressions (like <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>exp</mo><mo stretchy="false" form="prefix">{</mo><mi>y</mi><mi>a</mi><msup><mi>x</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\exp\{y a x^2\}</annotation></semantics></math> using a <em>computational graph</em> that represents the expression.</p>
-<p>These kind of computational graphs have the nice property that for any differentiable expression that we can model in software, its partial derivative with respect to some node in the graph can be efficiently and accurately computed without resorting to numerical finite difference methods or slow, potentially difficult to compose symbolic methods.</p>
-<p>There are many libraries that do this. This library itself is based on the excellent work by Karpathy who developed the Python library known as <a href="https://github.com/karpathy/micrograd" class="external-link"><code>micrograd</code></a>, which was developed for the explicit purpose of teaching the basic concept of AD and backpropagation for minimizing loss functions for neural networks.</p>
-<p>Let’s solve for the MLE iteratively as a demonstration of how to use <a href="https://github.com/queelius/femtograd" class="external-link"><code>femtograd</code></a>. First, we construct the log-likelihood generator:</p>
+<div class="section level2">
+<h2 id="core-concepts">Core Concepts<a class="anchor" aria-label="anchor" href="#core-concepts"></a>
+</h2>
+<div class="section level3">
+<h3 id="computational-graph">Computational Graph<a class="anchor" aria-label="anchor" href="#computational-graph"></a>
+</h3>
+<p>Create differentiable values with <code><a href="reference/val.html">val()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">loglike_exp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
-<span><span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">-</span> <span class="va">rate</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<p>Initially, we guess that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>λ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat\lambda</annotation></semantics></math> is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>, which is a terrible estimate.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rate</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p>Gradient clipping is a technique to prevent taking too large of a step when gradients become too large (remember that gradients are a <em>local</em> feature, so we generally should not use it to take too big of a step) during optimization, which can cause instability or overshooting the optimal value. By limiting the step size, gradient clipping helps ensure that the optimization takes smaller, more stable steps.</p>
-<p>Here is the R code:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Takes a gradient `g` and an optional `max_norm` parameter, which defaults</span></span>
-<span><span class="co"># to 1. It calculates the gradient's L2 norm (Euclidean norm) and scales the</span></span>
-<span><span class="co"># gradient down if its norm exceeds the specified max_norm. This is used during</span></span>
-<span><span class="co"># the gradient ascent loop to help ensure stable optimization.</span></span>
-<span><span class="va">grad_clip</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">g</span>, <span class="va">max_norm</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">g</span> <span class="op">*</span> <span class="va">g</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">norm</span> <span class="op">&gt;</span> <span class="va">max_norm</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">g</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">max_norm</span> <span class="op">/</span> <span class="va">norm</span><span class="op">)</span> <span class="op">*</span> <span class="va">g</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="va">g</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<p>We find the MLE using a simple iteration (200 loops).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="fu">loglike_exp</span><span class="op">(</span><span class="va">rate</span>, <span class="va">data</span><span class="op">)</span></span>
-<span><span class="va">lr</span> <span class="op">&lt;-</span> <span class="fl">0.2</span> <span class="co"># learning rate</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">200</span><span class="op">)</span></span>
-<span><span class="op">{</span></span>
-<span>  <span class="fu">zero_grad</span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="reference/backward.html">backward</a></span><span class="op">(</span><span class="va">loglik</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">x</span><span class="op">*</span><span class="va">y</span>  <span class="co"># z = 9 + 12 = 21</span></span>
 <span></span>
-<span>  <span class="fu"><a href="reference/data.html">data</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/data.html">data</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span> <span class="op">+</span> <span class="va">lr</span> <span class="op">*</span> <span class="fu">grad_clip</span><span class="op">(</span><span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">50</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"iteration"</span>, <span class="va">i</span>, <span class="st">", rate ="</span>, <span class="fu"><a href="reference/data.html">data</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span>, <span class="st">", drate/dl ="</span>, <span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#&gt; iteration 50 , rate = 6.238781 , drate/dl = 0.006148105 </span></span>
-<span><span class="co">#&gt; iteration 100 , rate = 6.245533 , drate/dl = 1.447689e-06 </span></span>
-<span><span class="co">#&gt; iteration 150 , rate = 6.245535 , drate/dl = 3.418377e-10 </span></span>
-<span><span class="co">#&gt; iteration 200 , rate = 6.245535 , drate/dl = 8.082424e-14</span></span></code></pre></div>
-<p>Did the gradient ascent method converge to the MLE?</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">converged</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">mle.rate</span> <span class="op">-</span> <span class="fu"><a href="reference/data.html">data</a></span><span class="op">(</span><span class="va">rate</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>It’s worth pointing out that we did not update <code>loglik</code> in the gradient ascent loop, since we only needed the gradient (score) in this case. If, however, we had needed to know the log-likelihood for some reason, such as when using a line search method to avoid overshooting, we would need to update with <code>loglik &lt;- loglike_exp(rate, data)</code> each time through the loop.</p>
+<span><span class="fu"><a href="reference/backward.html">backward</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>  <span class="co"># dz/dx = 2x + y = 10</span></span>
+<span><span class="fu"><a href="reference/grad.html">grad</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>  <span class="co"># dz/dy = x = 3</span></span></code></pre></div>
 </div>
-
+<div class="section level3">
+<h3 id="supported-operations">Supported Operations<a class="anchor" aria-label="anchor" href="#supported-operations"></a>
+</h3>
+<p>Arithmetic: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code></p>
+<p>Transcendental: <code>log</code>, <code>exp</code>, <code>sqrt</code>, <code>sin</code>, <code>cos</code>, <code>tanh</code>, <code>lgamma</code>, <code>digamma</code>, <code>log1p</code></p>
+<p>Activations: <code>sigmoid</code>, <code>relu</code>, <code>softplus</code>, <code>logit</code></p>
+<p>Stability: <code>logsumexp</code>, <code>softmax</code>, <code>log_safe</code>, <code>div_safe</code>, <code>exp_safe</code>, <code>sigmoid_stable</code>, <code>log_sigmoid</code></p>
+</div>
+<div class="section level3">
+<h3 id="hessian-computation">Hessian Computation<a class="anchor" aria-label="anchor" href="#hessian-computation"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">x</span><span class="op">*</span><span class="va">y</span> <span class="op">+</span> <span class="va">y</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/hessian.html">hessian</a></span><span class="op">(</span><span class="va">f</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Returns 2x2 Hessian matrix</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="maximum-likelihood-estimation">Maximum Likelihood Estimation<a class="anchor" aria-label="anchor" href="#maximum-likelihood-estimation"></a>
+</h2>
+<div class="section level3">
+<h3 id="built-in-distributions">Built-in Distributions<a class="anchor" aria-label="anchor" href="#built-in-distributions"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Normal distribution</span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="reference/loglik_normal.html">loglik_normal</a></span><span class="op">(</span><span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">p</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Poisson distribution</span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="reference/loglik_poisson.html">loglik_poisson</a></span><span class="op">(</span><span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Gamma distribution</span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="reference/loglik_gamma.html">loglik_gamma</a></span><span class="op">(</span><span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">p</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">data</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="optimization-methods">Optimization Methods<a class="anchor" aria-label="anchor" href="#optimization-methods"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Gradient ascent</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gradient_ascent.html">gradient_ascent</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="va">params</span>, lr <span class="op">=</span> <span class="fl">0.01</span>, max_iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Newton-Raphson (uses Hessian)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/newton_raphson.html">newton_raphson</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="va">params</span>, max_iter <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># BFGS quasi-Newton</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bfgs.html">bfgs</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="va">params</span>, maximize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># L-BFGS (memory efficient)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/lbfgs.html">lbfgs</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="va">params</span>, m <span class="op">=</span> <span class="fl">10</span>, maximize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Full MLE with inference</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_mle.html">find_mle</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="va">params</span>, method <span class="op">=</span> <span class="st">"newton"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="statistical-inference">Statistical Inference<a class="anchor" aria-label="anchor" href="#statistical-inference"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_mle.html">find_mle</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Standard errors from Fisher information</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">se</span></span>
+<span></span>
+<span><span class="co"># Variance-covariance matrix</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">vcov</span></span>
+<span></span>
+<span><span class="co"># Confidence intervals</span></span>
+<span><span class="fu"><a href="reference/confint_mle.html">confint_mle</a></span><span class="op">(</span><span class="va">result</span>, level <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Wald test</span></span>
+<span><span class="fu"><a href="reference/wald_test.html">wald_test</a></span><span class="op">(</span><span class="va">result</span>, null_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="example-normal-mle">Example: Normal MLE<a class="anchor" aria-label="anchor" href="#example-normal-mle"></a>
+</h2>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">true_mu</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">true_sigma</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="va">true_mu</span>, <span class="va">true_sigma</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">loglik</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="reference/loglik_normal.html">loglik_normal</a></span><span class="op">(</span><span class="va">p</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">p</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Find MLE</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/find_mle.html">find_mle</a></span><span class="op">(</span><span class="va">loglik</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="reference/val.html">val</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"MLE mu:"</span>, <span class="va">result</span><span class="op">$</span><span class="va">estimate</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"SE:"</span>, <span class="va">result</span><span class="op">$</span><span class="va">se</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"MLE sigma:"</span>, <span class="va">result</span><span class="op">$</span><span class="va">estimate</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="st">"SE:"</span>, <span class="va">result</span><span class="op">$</span><span class="va">se</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 95% confidence intervals</span></span>
+<span><span class="fu"><a href="reference/confint_mle.html">confint_mle</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
+</h2>
+<ul>
+<li>
+<strong>Pedagogy over performance</strong>: Code prioritizes clarity for teaching AD concepts</li>
+<li>
+<strong>Statistics focus</strong>: Built for MLE, Hessians, and inference rather than deep learning</li>
+<li>
+<strong>Composable foundation</strong>: Designed as a building block for other statistical packages</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
+</h2>
+<p>Inspired by Karpathy’s <a href="https://github.com/karpathy/micrograd" class="external-link">micrograd</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>GPL-3</p>
+</div>
+</div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">

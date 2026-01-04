@@ -1,7 +1,6 @@
 # Log(1+x) for value objects
 
-Computes log(1+x) in a numerically stable way. Essential for computing
-log-likelihoods with probabilities near 0 or 1.
+Element-wise log(1+x), numerically stable for small x.
 
 ## Usage
 

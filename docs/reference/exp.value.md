@@ -1,6 +1,6 @@
 # Exponential function for value objects
 
-Exponential function for value objects
+Element-wise exponential.
 
 ## Usage
 
@@ -17,4 +17,4 @@ exp(x)
 
 ## Value
 
-A new value object representing the exponential of x
+A new value object representing exp(x)

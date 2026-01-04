@@ -9,7 +9,7 @@ value R6 class"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">femtograd</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,17 +42,22 @@ value R6 class"></head><body>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Represents a node in the computational graph with automatic differentiation.
-Each value object holds data, gradient, a backward function, previous nodes,
-and an optional label for debugging.</p>
+Each value object holds data as a matrix, gradient as a matrix of the same
+dimensions, a backward function, previous nodes, and an optional label.</p>
+<p>All data in femtograd uses matrix representation:</p><ul><li><p>Scalars are 1x1 matrices</p></li>
+<li><p>Column vectors are n x 1 matrices</p></li>
+<li><p>Row vectors are 1 x n matrices</p></li>
+<li><p>Matrices are m x n matrices</p></li>
+</ul><p>This ensures consistent behavior for data(), grad(), and hessian().</p>
     </div>
     <div class="section level2">
     <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
     <p></p><div class="r6-fields"><dl><dt><code>data</code></dt>
-<dd><p>Numeric value of the object</p></dd>
+<dd><p>Numeric matrix containing the value</p></dd>
 
 
 <dt><code>grad</code></dt>
-<dd><p>Gradient value, initially set to 0</p></dd>
+<dd><p>Gradient matrix (same dimensions as data), initially zeros</p></dd>
 
 
 <dt><code>backward_fn</code></dt>
@@ -87,7 +92,7 @@ and an optional label for debugging.</p>
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>data</code></dt>
-<dd><p>Numeric value of the object</p></dd>
+<dd><p>Numeric value (scalar, vector, or matrix) - will be converted to matrix</p></dd>
 
 
 <dt><code>children</code></dt>

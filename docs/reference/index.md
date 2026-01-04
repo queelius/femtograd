@@ -21,8 +21,32 @@
 - [`backward(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/backward.value.md)
   : Backward pass for value objects
 
+- [`bfgs()`](https://queelius.github.io/femtograd/reference/bfgs.md) :
+  BFGS quasi-Newton optimizer
+
+- [`bootstrap`](https://queelius.github.io/femtograd/reference/bootstrap.md)
+  : Bootstrap Inference
+
+- [`bootstrap_fit()`](https://queelius.github.io/femtograd/reference/bootstrap_fit.md)
+  : Bootstrap standard errors and confidence intervals
+
+- [`bounded()`](https://queelius.github.io/femtograd/reference/bounded.md)
+  : Transform to bounded interval
+
+- [`check_convergence()`](https://queelius.github.io/femtograd/reference/check_convergence.md)
+  : Check convergence diagnostics
+
+- [`check_hessian()`](https://queelius.github.io/femtograd/reference/check_hessian.md)
+  : Check Hessian properties
+
+- [`confint(`*`<bootstrap_result>`*`)`](https://queelius.github.io/femtograd/reference/confint.bootstrap_result.md)
+  : Confidence intervals from bootstrap
+
 - [`confint_mle()`](https://queelius.github.io/femtograd/reference/confint_mle.md)
   : Compute confidence intervals from MLE results
+
+- [`confint_profile()`](https://queelius.github.io/femtograd/reference/confint_profile.md)
+  : Profile confidence intervals
 
 - [`cos(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/cos.value.md)
   : Cosine function for value objects
@@ -38,13 +62,22 @@
   object
 
 - [`data(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/data.value.md)
-  : Retrieve the value or data from a value object
+  : Retrieve the data matrix from a value object
+
+- [`diagnostics()`](https://queelius.github.io/femtograd/reference/diagnostics.md)
+  : Model Diagnostics
 
 - [`digamma(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/digamma.value.md)
   : Digamma (psi) function for value objects
 
 - [`distributions`](https://queelius.github.io/femtograd/reference/distributions.md)
   : Log-likelihood functions for exponential family distributions
+
+- [`div_safe()`](https://queelius.github.io/femtograd/reference/div_safe.md)
+  : Safe division (handles division by zero)
+
+- [`dof()`](https://queelius.github.io/femtograd/reference/dof.md) :
+  Extract degrees of freedom from hypothesis test
 
 - [`` `-`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/dot-value.md)
   : Subtraction for value objects
@@ -58,6 +91,20 @@
 - [`exp(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/exp.value.md)
   : Exponential function for value objects
 
+- [`exp_safe()`](https://queelius.github.io/femtograd/reference/exp_safe.md)
+  : Stable exp function (with overflow protection)
+
+- [`femtofit()`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`coef(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`vcov(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`confint(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`logLik(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`nobs(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`print(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`summary(`*`<femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  [`print(`*`<summary.femtofit>`*`)`](https://queelius.github.io/femtograd/reference/femtofit.md)
+  : Constructor for femtofit objects
+
 - [`find_mle()`](https://queelius.github.io/femtograd/reference/find_mle.md)
   : Find MLE with standard errors
 
@@ -67,17 +114,19 @@
 - [`fisher_scoring()`](https://queelius.github.io/femtograd/reference/fisher_scoring.md)
   : Fisher scoring optimizer
 
+- [`fit()`](https://queelius.github.io/femtograd/reference/fit.md) : Fit
+  a model via maximum likelihood
+
+- [`fitting`](https://queelius.github.io/femtograd/reference/fitting.md)
+  : Statistical model fitting with automatic differentiation
+
 - [`grad()`](https://queelius.github.io/femtograd/reference/grad.md) :
 
   Gradient of `x` with respect to `e` in `backward(e)`, e.g., dx/de.
   (applies the chain rule)
 
 - [`grad(`*`<default>`*`)`](https://queelius.github.io/femtograd/reference/grad.default.md)
-  :
-
-  Default gradient is one that does not propograte gradients and is
-  zero.`value` object `x` with respect to `e` in `backward(e)`, e.g.,
-  dx/de. (applies the chain rule)
+  : Default gradient is zero matrix
 
 - [`grad(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/grad.value.md)
   :
@@ -98,20 +147,53 @@
   : Compute Hessian matrix via forward-over-reverse automatic
   differentiation
 
+- [`hypothesis_tests`](https://queelius.github.io/femtograd/reference/hypothesis_tests.md)
+  : Hypothesis Testing for Fitted Models
+
+- [`inv_bounded()`](https://queelius.github.io/femtograd/reference/inv_bounded.md)
+  : Inverse of bounded transform
+
+- [`inv_positive()`](https://queelius.github.io/femtograd/reference/inv_positive.md)
+  : Inverse of positive transform
+
+- [`inv_probability()`](https://queelius.github.io/femtograd/reference/inv_probability.md)
+  : Inverse of probability transform
+
+- [`inverse_transforms`](https://queelius.github.io/femtograd/reference/inverse_transforms.md)
+  : Inverse transforms for recovering original scale
+
 - [`is_dual()`](https://queelius.github.io/femtograd/reference/is_dual.md)
   : Check if object is a dual number
+
+- [`is_significant_at()`](https://queelius.github.io/femtograd/reference/is_significant_at.md)
+  : Check if test is significant at given level
 
 - [`is_value()`](https://queelius.github.io/femtograd/reference/is_value.md)
   : Check if an object is of class value
 
+- [`lbfgs()`](https://queelius.github.io/femtograd/reference/lbfgs.md) :
+  L-BFGS optimizer (limited memory BFGS)
+
 - [`lgamma(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/lgamma.value.md)
   : Log-gamma function for value objects
+
+- [`line_search()`](https://queelius.github.io/femtograd/reference/line_search.md)
+  : Backtracking line search (Armijo condition)
 
 - [`log(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/log.value.md)
   : Natural logarithm for value objects
 
 - [`log1p(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/log1p.value.md)
   : Log(1+x) for value objects
+
+- [`log1p_safe()`](https://queelius.github.io/femtograd/reference/log1p_safe.md)
+  : Log1p with underflow protection
+
+- [`log_safe()`](https://queelius.github.io/femtograd/reference/log_safe.md)
+  : Safe logarithm (handles zeros)
+
+- [`log_sigmoid()`](https://queelius.github.io/femtograd/reference/log_sigmoid.md)
+  : Log-sigmoid (numerically stable)
 
 - [`logit()`](https://queelius.github.io/femtograd/reference/logit.md) :
   Logit function for value objects
@@ -140,8 +222,23 @@
 - [`loglik_normal()`](https://queelius.github.io/femtograd/reference/loglik_normal.md)
   : Normal (Gaussian) log-likelihood
 
+- [`loglik_pareto()`](https://queelius.github.io/femtograd/reference/loglik_pareto.md)
+  : Pareto distribution log-likelihood
+
 - [`loglik_poisson()`](https://queelius.github.io/femtograd/reference/loglik_poisson.md)
   : Poisson distribution log-likelihood
+
+- [`loglik_weibull()`](https://queelius.github.io/femtograd/reference/loglik_weibull.md)
+  : Weibull distribution log-likelihood
+
+- [`logsumexp()`](https://queelius.github.io/femtograd/reference/logsumexp.md)
+  : Log-Sum-Exp (numerically stable)
+
+- [`lower_bounded()`](https://queelius.github.io/femtograd/reference/lower_bounded.md)
+  : Transform to lower-bounded interval
+
+- [`lrt()`](https://queelius.github.io/femtograd/reference/lrt.md) :
+  Likelihood Ratio Test
 
 - [`mean(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/mean.value.md)
   : Mean for value objects
@@ -149,11 +246,20 @@
 - [`newton_raphson()`](https://queelius.github.io/femtograd/reference/newton_raphson.md)
   : Newton-Raphson optimizer
 
+- [`observed_info()`](https://queelius.github.io/femtograd/reference/observed_info.md)
+  : Observed Fisher information matrix
+
 - [`optimization`](https://queelius.github.io/femtograd/reference/optimization.md)
   : Optimization routines for maximum likelihood estimation
 
+- [`plot(`*`<profile_likelihood>`*`)`](https://queelius.github.io/femtograd/reference/plot.profile_likelihood.md)
+  : Plot profile likelihood
+
 - [`` `+`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/plus-.value.md)
   : Addition for value objects
+
+- [`positive()`](https://queelius.github.io/femtograd/reference/positive.md)
+  : Transform to positive values
 
 - [`` `^`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/pow-.value.md)
   : Power operation for value objects.
@@ -161,14 +267,52 @@
 - [`primal()`](https://queelius.github.io/femtograd/reference/primal.md)
   : Extract primal from dual or return value unchanged
 
+- [`print(`*`<bootstrap_result>`*`)`](https://queelius.github.io/femtograd/reference/print.bootstrap_result.md)
+  : Print method for bootstrap results
+
+- [`print(`*`<hessian_check>`*`)`](https://queelius.github.io/femtograd/reference/print.hessian_check.md)
+  [`print(`*`<convergence_check>`*`)`](https://queelius.github.io/femtograd/reference/print.hessian_check.md)
+  [`print(`*`<model_diagnostics>`*`)`](https://queelius.github.io/femtograd/reference/print.hessian_check.md)
+  : Print methods for diagnostic objects
+
+- [`print(`*`<likelihood_ratio_test>`*`)`](https://queelius.github.io/femtograd/reference/print.likelihood_ratio_test.md)
+  : Print method for likelihood ratio test
+
+- [`print(`*`<profile_likelihood>`*`)`](https://queelius.github.io/femtograd/reference/print.profile_likelihood.md)
+  : Print method for profile likelihood
+
 - [`print(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/print.value.md)
   : Print value object and its computational graph
 
+- [`print(`*`<wald_test>`*`)`](https://queelius.github.io/femtograd/reference/print.wald_test.md)
+  : Print method for Wald test
+
+- [`probability()`](https://queelius.github.io/femtograd/reference/probability.md)
+  : Transform to probability values
+
+- [`profile_likelihood`](https://queelius.github.io/femtograd/reference/profile_likelihood.md)
+  : Profile Likelihood
+
+- [`profile_loglik()`](https://queelius.github.io/femtograd/reference/profile_loglik.md)
+  : Compute profile likelihood for a parameter
+
+- [`pval()`](https://queelius.github.io/femtograd/reference/pval.md) :
+  Extract p-value from hypothesis test
+
 - [`relu()`](https://queelius.github.io/femtograd/reference/relu.md) :
-  ReLU (Rectified Linear Unit) activation function for value objects
+  ReLU activation function for value objects
+
+- [`se()`](https://queelius.github.io/femtograd/reference/se.md) :
+  Standard errors from a fitted model
+
+- [`se_reliable()`](https://queelius.github.io/femtograd/reference/se_reliable.md)
+  : Check if standard errors are reliable
 
 - [`sigmoid()`](https://queelius.github.io/femtograd/reference/sigmoid.md)
   : Sigmoid activation function for value objects
+
+- [`sigmoid_stable()`](https://queelius.github.io/femtograd/reference/sigmoid_stable.md)
+  : Stable sigmoid function
 
 - [`sin(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/sin.value.md)
   : Sine function for value objects
@@ -176,11 +320,17 @@
 - [`` `/`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/slash-.value.md)
   : Division for value objects
 
+- [`softmax()`](https://queelius.github.io/femtograd/reference/softmax.md)
+  : Softmax function (numerically stable)
+
 - [`softplus()`](https://queelius.github.io/femtograd/reference/softplus.md)
   : Softplus function for value objects
 
 - [`sqrt(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/sqrt.value.md)
   : Square root for value objects
+
+- [`stability`](https://queelius.github.io/femtograd/reference/stability.md)
+  : Numerical stability utilities for automatic differentiation
 
 - [`std_errors()`](https://queelius.github.io/femtograd/reference/std_errors.md)
   : Compute standard errors from Hessian
@@ -191,17 +341,29 @@
 - [`sum(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/sum.value.md)
   : Summation for value objects
 
+- [`summary(`*`<bootstrap_result>`*`)`](https://queelius.github.io/femtograd/reference/summary.bootstrap_result.md)
+  : Summary for bootstrap results
+
 - [`tangent()`](https://queelius.github.io/femtograd/reference/tangent.md)
   : Extract tangent from dual or return 0
 
 - [`tanh(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/tanh.value.md)
-  : Hyperbolic tangent activation function for value objects
+  : Hyperbolic tangent for value objects
+
+- [`test_stat()`](https://queelius.github.io/femtograd/reference/test_stat.md)
+  : Extract test statistic from hypothesis test
 
 - [`` `*`( ``*`<value>`*`)`](https://queelius.github.io/femtograd/reference/times-.value.md)
   : Multiplication for value objects
 
+- [`transforms`](https://queelius.github.io/femtograd/reference/transforms.md)
+  : Parameter Transformation Helpers
+
 - [`trigamma(`*`<value>`*`)`](https://queelius.github.io/femtograd/reference/trigamma.value.md)
   : Trigamma function for value objects
+
+- [`upper_bounded()`](https://queelius.github.io/femtograd/reference/upper_bounded.md)
+  : Transform to upper-bounded interval
 
 - [`val()`](https://queelius.github.io/femtograd/reference/val.md) :
 
@@ -214,4 +376,4 @@
   : Compute variance-covariance matrix from Hessian
 
 - [`wald_test()`](https://queelius.github.io/femtograd/reference/wald_test.md)
-  : Wald test for hypothesis testing
+  : Wald Test for Model Parameters

@@ -1,7 +1,6 @@
 # Mean for value objects
 
-Overrides base::mean to work with value objects. Computes the arithmetic
-mean and properly propagates gradients (each input gets gradient / n).
+Computes the arithmetic mean of all elements across value objects.
 
 ## Usage
 
@@ -14,7 +13,7 @@ mean(x, ...)
 
 - x:
 
-  A value object or vector of value objects
+  A value object or list of value objects
 
 - ...:
 
@@ -22,4 +21,4 @@ mean(x, ...)
 
 ## Value
 
-A new value object representing the mean
+A new value object (1x1 matrix) representing the mean
