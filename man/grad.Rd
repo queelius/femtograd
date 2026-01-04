@@ -13,7 +13,7 @@ grad(x, ...)
 \item{...}{pass additional arguments}
 }
 \value{
-The gradient as previously defined
+The gradient matrix (same dimensions as data)
 }
 \description{
 Gradient of \code{x} with respect to \code{e} in \code{backward(e)},

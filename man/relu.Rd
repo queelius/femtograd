@@ -2,7 +2,7 @@
 % Please edit documentation in R/ops.R
 \name{relu}
 \alias{relu}
-\title{ReLU (Rectified Linear Unit) activation function for value objects}
+\title{ReLU activation function for value objects}
 \usage{
 relu(x)
 }
@@ -13,5 +13,5 @@ relu(x)
 A new value object representing max(0, x)
 }
 \description{
-ReLU (Rectified Linear Unit) activation function for value objects
+Element-wise ReLU: max(0, x)
 }

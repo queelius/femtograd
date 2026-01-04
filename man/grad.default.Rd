@@ -2,20 +2,18 @@
 % Please edit documentation in R/value.R
 \name{grad.default}
 \alias{grad.default}
-\title{Default gradient is one that does not propograte gradients and is zero.\code{value} object \code{x} with respect to \code{e} in
-\code{backward(e)}, e.g., dx/de. (applies the chain rule)}
+\title{Default gradient is zero matrix}
 \usage{
 \method{grad}{default}(x, ...)
 }
 \arguments{
-\item{x}{A value object}
+\item{x}{A non-value object}
 
 \item{...}{pass additional arguments}
 }
 \value{
-The value or data of the value object
+Zero matrix of appropriate dimensions
 }
 \description{
-Default gradient is one that does not propograte gradients and is zero.\code{value} object \code{x} with respect to \code{e} in
-\code{backward(e)}, e.g., dx/de. (applies the chain rule)
+Default gradient is zero matrix
 }

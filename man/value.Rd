@@ -10,15 +10,25 @@ value R6 class
 }
 \details{
 Represents a node in the computational graph with automatic differentiation.
-Each value object holds data, gradient, a backward function, previous nodes,
-and an optional label for debugging.
+Each value object holds data as a matrix, gradient as a matrix of the same
+dimensions, a backward function, previous nodes, and an optional label.
+
+All data in femtograd uses matrix representation:
+\itemize{
+\item Scalars are 1x1 matrices
+\item Column vectors are n x 1 matrices
+\item Row vectors are 1 x n matrices
+\item Matrices are m x n matrices
+}
+
+This ensures consistent behavior for data(), grad(), and hessian().
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{data}}{Numeric value of the object}
+\item{\code{data}}{Numeric matrix containing the value}
 
-\item{\code{grad}}{Gradient value, initially set to 0}
+\item{\code{grad}}{Gradient matrix (same dimensions as data), initially zeros}
 
 \item{\code{backward_fn}}{A function that performs the backward pass (gradient computation)}
 
@@ -47,7 +57,7 @@ Initializes a new value object with the given data, list of children, and option
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{Numeric value of the object}
+\item{\code{data}}{Numeric value (scalar, vector, or matrix) - will be converted to matrix}
 
 \item{\code{children}}{List of previous nodes in the computational graph (default: empty list)}
 

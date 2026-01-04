@@ -7,13 +7,14 @@
 \method{*}{value}(e1, e2)
 }
 \arguments{
-\item{e1}{A value object}
+\item{e1}{A value object or numeric}
 
-\item{e2}{A value object or a scalar}
+\item{e2}{A value object or numeric}
 }
 \value{
-A new value object representing the product
+A new value object representing the element-wise product
 }
 \description{
-Multiplication for value objects
+Element-wise multiplication of two value objects or a value and numeric.
+Supports broadcasting when one operand is a 1x1 scalar matrix.
 }

@@ -5,15 +5,18 @@
 \title{Gradient of a \code{value} object \code{x} with respect to \code{e} in
 \code{backward(e)}, e.g., dx/de. (applies the chain rule)}
 \usage{
-\method{grad}{value}(x, ...)
+\method{grad}{value}(x, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A value object}
 
+\item{drop}{If TRUE (default) and result is 1x1, return scalar.
+Set to FALSE to always return a matrix.}
+
 \item{...}{pass additional arguments}
 }
 \value{
-The value or data of the value object
+The gradient as scalar (if 1x1 and drop=TRUE) or matrix
 }
 \description{
 Gradient of a \code{value} object \code{x} with respect to \code{e} in

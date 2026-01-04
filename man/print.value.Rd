@@ -4,12 +4,12 @@
 \alias{print.value}
 \title{Print value object and its computational graph}
 \usage{
-\method{print}{value}(v, depth = Inf, indent = "  ")
+\method{print}{value}(v, depth = Inf, indent = "  ", ...)
 }
 \arguments{
 \item{v}{A value object}
 
-\item{depth}{Integer indicates depth (dfs) to recursve down the graph}
+\item{depth}{Integer indicates depth (dfs) to recurse down the graph}
 
 \item{indent}{A character string specifying the indentation for each level in
 the computational graph (default: "  ")}

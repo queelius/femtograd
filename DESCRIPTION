@@ -1,11 +1,18 @@
 Package: femtograd
-Title: Like Micrograd, But Worse
-Version: 0.9000
-Authors@R: 
+Title: Automatic Differentiation for Statistical Computing
+Version: 0.3.0
+Authors@R:
     person("Alexander", "Towell", , "lex@metafunctor.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6443-9897"))
 Maintainer: Alexander Towell <lex@metafunctor.com>
-Description: Let's you construct differentiable expressions using auto differentiation.
+Description: Provides automatic differentiation via reverse-mode AD (backpropagation)
+    for first-order gradients and forward-over-reverse AD for Hessian computation.
+    Includes log-likelihood functions for exponential family distributions
+    (normal, exponential, Poisson, binomial, gamma, beta, negative binomial,
+    Weibull, Pareto), MLE optimization via fit() with base R generics (coef, vcov,
+    confint, logLik, AIC/BIC), hypothesis testing (likelihood ratio, Wald),
+    profile likelihood, bootstrap inference, and model diagnostics.
+    Designed for pedagogy and modern statistics rather than large-scale ML.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

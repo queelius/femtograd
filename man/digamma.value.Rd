@@ -13,7 +13,5 @@
 A new value object representing digamma(x)
 }
 \description{
-Computes the digamma function psi(x) = d/dx log(gamma(x)).
-This is the derivative of lgamma and appears in gradients of
-many statistical distributions.
+Element-wise digamma: d/dx log(gamma(x)).
 }

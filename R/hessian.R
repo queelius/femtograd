@@ -50,8 +50,8 @@ hessian <- function(loss_fn, params, value_creator = val)
   n <- length(params)
   H <- matrix(0, nrow = n, ncol = n)
 
-  # Extract current parameter values
-  param_values <- sapply(params, data)
+  # Extract current parameter values (as scalars using drop=TRUE)
+  param_values <- sapply(params, function(p) data(p, drop = TRUE))
 
   for (i in seq_len(n)) {
     # Create fresh value objects with dual structure
@@ -79,9 +79,12 @@ hessian <- function(loss_fn, params, value_creator = val)
     # The PRIMAL parameter's gradient gives the Hessian entry
     # (tangent expression depends on both primal and tangent params;
     #  differentiating w.r.t. primal gives the second derivative)
+    # Note: When a scalar parameter is broadcast across vector operations,
+    # grad() returns a matrix - sum all elements to get the total derivative.
     for (j in seq_len(n)) {
       primal_param <- primal(dual_params[[j]])
-      H[j, i] <- grad(primal_param)
+      g <- grad(primal_param)
+      H[j, i] <- sum(g)  # Sum all elements of the gradient matrix
     }
   }
 
@@ -97,20 +100,20 @@ hessian <- function(loss_fn, params, value_creator = val)
 #' @param loss_fn A function taking a list of value parameters
 #' @param params A list of value objects
 #'
-#' @return A numeric vector of gradients
+#' @return A numeric vector of gradients (one per parameter)
 #' @export
 gradient <- function(loss_fn, params)
 {
-  # Create fresh value objects
-  param_values <- sapply(params, data)
+  # Create fresh value objects (extract scalar values with drop=TRUE)
+  param_values <- sapply(params, function(p) data(p, drop = TRUE))
   fresh_params <- lapply(param_values, val)
 
   # Compute loss and backward
   loss <- loss_fn(fresh_params)
   backward(loss)
 
-  # Extract gradients
-  sapply(fresh_params, grad)
+  # Extract gradients (sum each gradient matrix to get scalar)
+  sapply(fresh_params, function(p) sum(grad(p)))
 }
 
 

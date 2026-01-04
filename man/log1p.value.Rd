@@ -13,6 +13,5 @@
 A new value object representing log(1+x)
 }
 \description{
-Computes log(1+x) in a numerically stable way. Essential for
-computing log-likelihoods with probabilities near 0 or 1.
+Element-wise log(1+x), numerically stable for small x.
 }

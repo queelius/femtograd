@@ -12,7 +12,7 @@
 \item{...}{pass additional arguments}
 }
 \value{
-The original object
+The original object converted to matrix
 }
 \description{
 Default implementation for retrieving the data from a differentiable object

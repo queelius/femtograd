@@ -209,3 +209,126 @@ test_that("loglik_logistic gradient is correct", {
   expect_equal(grad(beta[[1]]), expected_grad_0, tolerance = 1e-10)
   expect_equal(grad(beta[[2]]), expected_grad_1, tolerance = 1e-10)
 })
+
+
+# Weibull distribution tests
+
+test_that("loglik_weibull computes correct value for shape=1 (exponential)", {
+  # When shape = 1, Weibull reduces to exponential with rate = 1/scale
+  x <- c(1, 2, 3)
+  shape <- val(1)
+  scale <- val(2)  # rate = 0.5
+
+  ll_weibull <- loglik_weibull(shape, scale, x)
+
+  # For k=1: L = n*log(1) - n*1*log(λ) + 0*Σlog(x) - Σ(x/λ)
+  # = 0 - n*log(λ) - sum(x)/λ
+  # = -3*log(2) - 6/2 = -3*log(2) - 3
+  expected <- -3 * log(2) - 3
+  expect_equal(data(ll_weibull), expected, tolerance = 1e-10)
+})
+
+
+test_that("loglik_weibull produces correct gradients", {
+  set.seed(42)
+  x <- rweibull(50, shape = 2, scale = 3)
+
+  shape <- val(2)
+  scale <- val(3)
+
+  ll <- loglik_weibull(shape, scale, x)
+  backward(ll)
+
+  # Check gradients are finite
+  expect_true(is.finite(grad(shape)))
+  expect_true(is.finite(grad(scale)))
+})
+
+
+test_that("loglik_weibull works with fit()", {
+  set.seed(42)
+  true_shape <- 2
+  true_scale <- 3
+  x <- rweibull(100, shape = true_shape, scale = true_scale)
+
+  result <- fit(
+    function(log_shape, log_scale) {
+      shape <- exp(log_shape)
+      scale <- exp(log_scale)
+      loglik_weibull(shape, scale, x)
+    },
+    params = c(log_shape = 0.5, log_scale = 1)
+  )
+
+  expect_true(result$converged)
+
+  # Recover estimates
+  fitted_shape <- exp(coef(result)["log_shape"])
+  fitted_scale <- exp(coef(result)["log_scale"])
+
+  expect_equal(unname(fitted_shape), true_shape, tolerance = 0.3)
+  expect_equal(unname(fitted_scale), true_scale, tolerance = 0.5)
+})
+
+
+# Pareto distribution tests
+
+test_that("loglik_pareto computes correct value", {
+  x <- c(2, 3, 4)  # x_min = 1, all x >= x_min
+  alpha <- val(2)
+  x_min <- 1
+
+  ll <- loglik_pareto(alpha, x_min, x)
+
+  # L = n*log(α) + n*α*log(xₘ) - (α+1)*Σlog(xᵢ)
+  # = 3*log(2) + 3*2*log(1) - 3*Σlog(x)
+  # = 3*log(2) + 0 - 3*(log(2) + log(3) + log(4))
+  n <- 3
+  sum_log_x <- log(2) + log(3) + log(4)
+  expected <- n * log(2) + n * 2 * log(1) - (2 + 1) * sum_log_x
+  expect_equal(data(ll), expected, tolerance = 1e-10)
+})
+
+
+test_that("loglik_pareto gradient is correct", {
+  x <- c(2, 3, 4)
+  alpha <- val(2)
+  x_min <- 1
+
+  ll <- loglik_pareto(alpha, x_min, x)
+  backward(ll)
+
+  # d/dα [n*log(α) + n*α*log(xₘ) - (α+1)*Σlog(xᵢ)]
+  # = n/α + n*log(xₘ) - Σlog(xᵢ)
+  n <- 3
+  sum_log_x <- log(2) + log(3) + log(4)
+  expected_grad <- n / 2 + n * log(1) - sum_log_x
+  expect_equal(grad(alpha), expected_grad, tolerance = 1e-10)
+})
+
+
+test_that("loglik_pareto works with fit()", {
+  set.seed(42)
+  # Generate Pareto data using inverse transform
+  alpha_true <- 2
+  x_min <- 1
+  u <- runif(100)
+  x <- x_min * (1 - u)^(-1 / alpha_true)
+
+  result <- fit(
+    function(log_alpha) {
+      alpha <- exp(log_alpha)
+      loglik_pareto(alpha, x_min = min(x), x)
+    },
+    params = c(log_alpha = 0.5)
+  )
+
+  expect_true(result$converged)
+
+  # MLE for Pareto alpha is n / sum(log(x/x_min))
+  x_min_fit <- min(x)
+  mle_alpha <- length(x) / sum(log(x / x_min_fit))
+
+  fitted_alpha <- exp(coef(result)["log_alpha"])
+  expect_equal(unname(fitted_alpha), mle_alpha, tolerance = 0.01)
+})

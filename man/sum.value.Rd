@@ -7,14 +7,13 @@
 \method{sum}{value}(..., na.rm = FALSE)
 }
 \arguments{
-\item{...}{value objects and/or numeric scalars to sum}
+\item{...}{value objects and/or numeric values to sum}
 
-\item{na.rm}{Logical, whether to remove NA values (passed to base sum for scalars)}
+\item{na.rm}{Logical, whether to remove NA values}
 }
 \value{
-A new value object representing the sum
+A new value object (1x1 matrix) representing the sum
 }
 \description{
-Overrides base::sum to work with value objects. Supports mixed lists
-of value objects and numeric scalars.
+Sums all elements of value objects, returning a 1x1 value.
 }

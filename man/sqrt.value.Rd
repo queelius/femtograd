@@ -10,8 +10,8 @@
 \item{x}{A value object}
 }
 \value{
-A new value object representing the square root of x
+A new value object representing sqrt(x)
 }
 \description{
-Square root for value objects
+Element-wise square root.
 }

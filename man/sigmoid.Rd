@@ -10,8 +10,8 @@ sigmoid(x)
 \item{x}{A value object}
 }
 \value{
-A new value object representing sigmoid(x) = 1/(1+exp(-x))
+A new value object representing sigmoid(x)
 }
 \description{
-Sigmoid activation function for value objects
+Element-wise sigmoid: 1/(1+exp(-x))
 }

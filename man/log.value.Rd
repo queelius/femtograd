@@ -4,14 +4,14 @@
 \alias{log.value}
 \title{Natural logarithm for value objects}
 \usage{
-\method{log}{value}(x)
+\method{log}{value}(x, ...)
 }
 \arguments{
 \item{x}{A value object}
 }
 \value{
-A new value object representing the natural logarithm of x
+A new value object representing log(x)
 }
 \description{
-Natural logarithm for value objects
+Element-wise natural logarithm.
 }

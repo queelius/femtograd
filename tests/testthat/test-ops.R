@@ -55,7 +55,7 @@ test_that("scalar-value operations work (scalar first)", {
   # Vector divided by value
   y <- val(2)
   result <- c(2, 4, 6) / y
-  expect_equal(data(result), c(1, 2, 3))
+  expect_equal(as.vector(data(result)), c(1, 2, 3))
 })
 
 test_that("power with value exponent has correct gradient", {

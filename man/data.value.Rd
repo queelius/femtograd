@@ -2,18 +2,21 @@
 % Please edit documentation in R/value.R
 \name{data.value}
 \alias{data.value}
-\title{Retrieve the value or data from a value object}
+\title{Retrieve the data matrix from a value object}
 \usage{
-\method{data}{value}(x, ...)
+\method{data}{value}(x, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A value object}
 
+\item{drop}{If TRUE (default) and result is 1x1, return scalar.
+Set to FALSE to always return a matrix.}
+
 \item{...}{additional arguments to pass}
 }
 \value{
-The value or data of the value object
+The data as scalar (if 1x1 and drop=TRUE) or matrix
 }
 \description{
-Retrieve the value or data from a value object
+Retrieve the data matrix from a value object
 }

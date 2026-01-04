@@ -13,6 +13,5 @@
 A new value object representing trigamma(x)
 }
 \description{
-Computes the trigamma function, the second derivative of lgamma.
-Useful for Hessian computations involving gamma-related distributions.
+Element-wise trigamma: second derivative of lgamma.
 }

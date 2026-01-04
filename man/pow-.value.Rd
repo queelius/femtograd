@@ -7,13 +7,14 @@
 \method{^}{value}(b, e)
 }
 \arguments{
-\item{b}{A value object as the base}
+\item{b}{A value object or numeric (base)}
 
-\item{e}{A value object, a scalar, or a numeric constant as the exponent}
+\item{e}{A value object or numeric (exponent)}
 }
 \value{
-A new value object representing the power b^e
+A new value object representing the element-wise power b^e
 }
 \description{
-Power operation for value objects.
+Element-wise power operation. Supports broadcasting when one operand
+is a 1x1 scalar matrix.
 }

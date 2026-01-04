@@ -7,14 +7,13 @@
 \method{mean}{value}(x, ...)
 }
 \arguments{
-\item{x}{A value object or vector of value objects}
+\item{x}{A value object or list of value objects}
 
 \item{...}{Additional arguments (for compatibility with base::mean)}
 }
 \value{
-A new value object representing the mean
+A new value object (1x1 matrix) representing the mean
 }
 \description{
-Overrides base::mean to work with value objects. Computes the arithmetic
-mean and properly propagates gradients (each input gets gradient / n).
+Computes the arithmetic mean of all elements across value objects.
 }

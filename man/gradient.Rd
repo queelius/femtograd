@@ -12,7 +12,7 @@ gradient(loss_fn, params)
 \item{params}{A list of value objects}
 }
 \value{
-A numeric vector of gradients
+A numeric vector of gradients (one per parameter)
 }
 \description{
 Convenience function to compute the gradient of a loss function

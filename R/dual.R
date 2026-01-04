@@ -314,9 +314,25 @@ relu.dual <- function(x)
   a <- primal(x)
   da <- tangent(x)
   # For value objects, need to extract numeric for comparison
-  a_num <- if (is_value(a)) data(a) else a
-  primal_result <- if (a_num > 0) a else val(0)
-  tangent_result <- if (a_num > 0) da else 0
+  # Handle matrix case: use element-wise max
+  if (is_value(a)) {
+    primal_result <- relu(a)
+    # tangent is da where a > 0, else 0
+    mask <- a$data > 0
+    if (is_zero_tangent(da) || !any(mask)) {
+      tangent_result <- 0
+    } else {
+      tangent_result <- da * val(as.numeric(mask))
+    }
+  } else {
+    primal_result <- pmax(0, a)
+    mask <- a > 0
+    if (is_zero_tangent(da) || !any(mask)) {
+      tangent_result <- 0
+    } else {
+      tangent_result <- da * as.numeric(mask)
+    }
+  }
   dual_num(primal_result, tangent_result)
 }
 

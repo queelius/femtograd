@@ -285,3 +285,140 @@ loglik_logistic <- function(beta, X, y)
 
   Reduce(`+`, ll_terms)
 }
+
+
+#' Weibull distribution log-likelihood
+#'
+#' Computes the log-likelihood for i.i.d. Weibull observations.
+#' L(k, λ | x) = n*log(k) - n*k*log(λ) + (k-1)*Σlog(xᵢ) - Σ(xᵢ/λ)^k
+#'
+#' @param shape Shape parameter k (value object), must be positive
+#' @param scale Scale parameter λ (value object), must be positive
+#' @param x Numeric vector of observations (must be positive)
+#'
+#' @return A value object representing the log-likelihood
+#'
+#' @details
+#' The Weibull distribution is commonly used in survival analysis and
+#' reliability engineering. It generalizes the exponential distribution
+#' (k=1 gives exponential with rate 1/λ).
+#'
+#' @examples
+#' \dontrun{
+#' x <- rweibull(100, shape = 2, scale = 3)
+#'
+#' # Using log-parameterization for positivity
+#' result <- fit(
+#'   function(log_shape, log_scale) {
+#'     shape <- exp(log_shape)
+#'     scale <- exp(log_scale)
+#'     loglik_weibull(shape, scale, x)
+#'   },
+#'   params = c(log_shape = 0, log_scale = 0)
+#' )
+#' }
+#'
+#' @export
+loglik_weibull <- function(shape, scale, x) {
+  n <- length(x)
+  sum_log_x <- sum(log(x))
+
+  # L = n*log(k) - n*k*log(λ) + (k-1)*Σlog(xᵢ) - Σ(xᵢ/λ)^k
+  # For autodiff, we need to build the expression from parameters
+
+  # First term: n * log(shape)
+  term1 <- log(shape) * n
+
+  # Second term: -n * shape * log(scale)
+  term2 <- shape * log(scale) * (-n)
+
+  # Third term: (shape - 1) * sum(log(x))
+  # Need to handle (shape - 1) carefully for autodiff
+  term3 <- (shape - 1) * sum_log_x
+
+  # Fourth term: -sum((x/scale)^shape)
+  # This is tricky for autodiff. We need:
+  # -sum(x^shape) / scale^shape = -sum(x^shape) * scale^(-shape)
+  # For stability, use log-space: exp(shape * log(x) - shape * log(scale))
+
+  # Compute -Σ(xᵢ/λ)^k = -Σexp(k*log(xᵢ) - k*log(λ))
+  # = -exp(log(Σexp(k*log(xᵢ) - k*log(λ))))
+  # But sum of exponentials doesn't simplify nicely.
+
+  # Alternative: compute as scalar multiplication
+  # -Σ(xᵢ/λ)^k where shape is a value object
+  # If shape is constant, we could precompute x^shape
+  # But for full autodiff, we need to handle this differently
+
+  # For practical cases, if scale is the main parameter:
+  if (is_value(shape) || is_dual(shape)) {
+    # Use differentiable form
+    # Compute sum of (x/scale)^shape = sum(exp(shape * log(x/scale)))
+    # = sum(exp(shape * (log(x) - log(scale))))
+    # = sum(exp(shape * log(x) - shape * log(scale)))
+    # We sum over i: exp(shape * log(x[i]) - shape * log(scale))
+
+    # This is expensive but necessary for full differentiability
+    log_x <- log(x)
+    # term4 = -sum_i exp(shape * log(x[i]) - shape * log(scale))
+    #       = -sum_i exp(shape * (log(x[i]) - log(scale)))
+
+    # Build as a sum over observations
+    exp_terms <- lapply(log_x, function(lxi) {
+      exp(shape * (lxi - log(scale)))
+    })
+    term4_sum <- Reduce(`+`, exp_terms)
+    term4 <- -term4_sum
+  } else {
+    # shape is numeric, can precompute
+    x_pow_k <- sum(x^shape)
+    term4 <- -(x_pow_k) * scale^(-shape)
+  }
+
+  term1 + term2 + term3 + term4
+}
+
+
+#' Pareto distribution log-likelihood
+#'
+#' Computes the log-likelihood for i.i.d. Pareto observations.
+#' L(α, xₘ | x) = n*log(α) + n*α*log(xₘ) - (α+1)*Σlog(xᵢ)
+#'
+#' @param alpha Shape parameter α (value object), must be positive
+#' @param x_min Minimum/scale parameter xₘ (fixed positive number).
+#'   All observations must be >= x_min.
+#' @param x Numeric vector of observations (must be >= x_min)
+#'
+#' @return A value object representing the log-likelihood
+#'
+#' @details
+#' The Pareto distribution is used to model heavy-tailed phenomena like
+#' income distributions, city sizes, etc. Here x_min is typically known
+#' (e.g., min(x)) and alpha is estimated.
+#'
+#' @examples
+#' \dontrun{
+#' # Generate Pareto data
+#' alpha_true <- 2
+#' x_min <- 1
+#' u <- runif(100)
+#' x <- x_min * (1 - u)^(-1/alpha_true)
+#'
+#' # Fit (alpha only, x_min = min(x) is fixed)
+#' result <- fit(
+#'   function(log_alpha) {
+#'     alpha <- exp(log_alpha)
+#'     loglik_pareto(alpha, x_min = min(x), x)
+#'   },
+#'   params = c(log_alpha = 0)
+#' )
+#' }
+#'
+#' @export
+loglik_pareto <- function(alpha, x_min, x) {
+  n <- length(x)
+  sum_log_x <- sum(log(x))
+
+  # L = n*log(α) + n*α*log(xₘ) - (α+1)*Σlog(xᵢ)
+  log(alpha) * n + alpha * (log(x_min) * n) - (alpha + 1) * sum_log_x
+}

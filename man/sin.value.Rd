@@ -13,5 +13,5 @@
 A new value object representing sin(x)
 }
 \description{
-Sine function for value objects
+Element-wise sine.
 }

@@ -7,12 +7,11 @@
 logit(x)
 }
 \arguments{
-\item{x}{A value object representing a probability}
+\item{x}{A value object representing probabilities}
 }
 \value{
 A new value object representing logit(x)
 }
 \description{
-Computes log(p/(1-p)), the log-odds transformation.
-Maps probabilities (0,1) to real line (-inf, inf).
+Element-wise logit: log(p/(1-p)).
 }

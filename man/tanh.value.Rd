@@ -2,7 +2,7 @@
 % Please edit documentation in R/ops.R
 \name{tanh.value}
 \alias{tanh.value}
-\title{Hyperbolic tangent activation function for value objects}
+\title{Hyperbolic tangent for value objects}
 \usage{
 \method{tanh}{value}(x)
 }
@@ -13,5 +13,5 @@
 A new value object representing tanh(x)
 }
 \description{
-Hyperbolic tangent activation function for value objects
+Element-wise tanh.
 }

@@ -13,5 +13,5 @@
 A new value object representing abs(x)
 }
 \description{
-Absolute value for value objects
+Element-wise absolute value.
 }

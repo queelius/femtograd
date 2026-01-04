@@ -13,5 +13,5 @@
 A new value object representing cos(x)
 }
 \description{
-Cosine function for value objects
+Element-wise cosine.
 }

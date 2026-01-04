@@ -12,7 +12,7 @@ data(x, ...)
 \item{...}{additional arguments to pass}
 }
 \value{
-The value or data of a differnetiable object
+The data matrix of the value object
 }
 \description{
 Retrieve the data stored by an object.

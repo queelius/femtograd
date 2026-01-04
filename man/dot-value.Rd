@@ -7,13 +7,14 @@
 \method{-}{value}(x, y = NULL)
 }
 \arguments{
-\item{x}{A value object (minuend)}
+\item{x}{A value object or numeric (minuend)}
 
-\item{y}{A value object or a scalar (subtrahend)}
+\item{y}{A value object or numeric (subtrahend), or NULL for unary negation}
 }
 \value{
-A new value object representing the subtraction x - y
+A new value object representing x - y or -x
 }
 \description{
-Subtraction for value objects
+Element-wise subtraction or unary negation. Supports broadcasting
+when one operand is a 1x1 scalar matrix.
 }

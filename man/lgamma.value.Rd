@@ -13,6 +13,5 @@
 A new value object representing lgamma(x)
 }
 \description{
-Computes log(gamma(x)), essential for many statistical distributions
-(Poisson, binomial, gamma, beta, etc.)
+Element-wise log(gamma(x)).
 }

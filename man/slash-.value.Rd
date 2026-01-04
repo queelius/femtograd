@@ -7,13 +7,14 @@
 \method{/}{value}(x, y)
 }
 \arguments{
-\item{x}{A value object (numerator)}
+\item{x}{A value object or numeric (numerator)}
 
-\item{y}{A value object or a scalar (denominator)}
+\item{y}{A value object or numeric (denominator)}
 }
 \value{
-A new value object representing the division x / y
+A new value object representing x / y
 }
 \description{
-Division for value objects
+Element-wise division. Supports broadcasting when one operand
+is a 1x1 scalar matrix.
 }

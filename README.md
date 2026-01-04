@@ -1,151 +1,164 @@
-femtograd
-================
+# femtograd
 
-- <a href="#exponential-distribution"
-  id="toc-exponential-distribution">Exponential distribution</a>
-- <a href="#automatic-differentiation-ad"
-  id="toc-automatic-differentiation-ad">Automatic differentiation (AD)</a>
+Automatic differentiation for statistical computing in R.
 
-Here’s a quick demonstration of how to use the
-[`femtograd`](https://github.com/queelius/femtograd) R package.
+`femtograd` provides reverse-mode AD (backpropagation) for first-order gradients and forward-over-reverse AD for Hessian computation. Designed for **pedagogy and modern statistics** rather than large-scale ML.
 
-Load it like this:
+## Features
 
-``` r
+- **Reverse-mode AD**: Efficient gradient computation via backpropagation
+- **Forward-over-reverse AD**: Second-order derivatives (Hessians) for Newton-Raphson and Fisher information
+- **Log-likelihood functions**: Exponential family distributions (normal, exponential, Poisson, binomial, gamma, beta, negative binomial, logistic, Bernoulli)
+- **MLE optimization**: Gradient ascent/descent, Newton-Raphson, BFGS, L-BFGS with line search
+- **Statistical inference**: Standard errors, variance-covariance matrices, confidence intervals, Wald tests
+- **Numerical stability**: logsumexp, softmax, safe log/division, overflow protection
+
+## Installation
+
+```r
+# Install from GitHub
+devtools::install_github("queelius/femtograd")
+```
+
+## Quick Start
+
+```r
 library(femtograd)
-#> 
-#> Attaching package: 'femtograd'
-#> The following object is masked from 'package:utils':
-#> 
-#>     data
+
+# Generate exponential data
+set.seed(42)
+x <- rexp(100, rate = 2)
+
+# Define log-likelihood
+loglik <- function(p) loglik_exponential(p[[1]], x)
+
+# Find MLE with standard errors
+result <- find_mle(loglik, list(val(1)), method = "newton")
+result$estimate  # MLE
+result$se        # Standard errors
 ```
 
-## Exponential distribution
+## Core Concepts
 
-Let’s create a simple loglikelihood function for the exponential
-distribution paramterized by $\lambda$ (failure rate).
+### Computational Graph
 
-We have
+Create differentiable values with `val()`:
 
-$$
-  f_{T_i}(t_i | \lambda) = \lambda \exp(-\lambda t_i).
-$$
+```r
+x <- val(3)
+y <- val(4)
+z <- x^2 + x*y  # z = 9 + 12 = 21
 
-So, the loglikelihood function is just
-
-$$
-  \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n t_i.
-$$
-
-Let’s generate $n=30$ observations.
-
-``` r
-n <- 30
-true_rate <- 7.3
-data <- rexp(n,true_rate)
-head(data)
-#> [1] 0.102432677 0.009849689 0.037429092 0.093926112 0.033046038 0.181780460
-
-(mle.rate <- abs(1/mean(data)))
-#> [1] 6.245535
+backward(z)
+grad(x)  # dz/dx = 2x + y = 10
+grad(y)  # dz/dy = x = 3
 ```
 
-We see that the MLE $\hat\theta$ is 6.2455349.
+### Supported Operations
 
-# Automatic differentiation (AD)
+Arithmetic: `+`, `-`, `*`, `/`, `^`
 
-Finding the value (argmax) that maximizes the
-log-likelihood function is trivial to solve in this case, and it has a
-closed-form solution. However, to demonstrate the use of `femtograd`, we
-will construct a `loglike_exp` function generator that returns an object
-that can be automatically differentiated (AD) using backpropogation,
-which is an efficient way of applying the chain-rule to expressions
-(like $\exp\{y a x^2\}$ using a *computational graph* that represents
-the expression.
+Transcendental: `log`, `exp`, `sqrt`, `sin`, `cos`, `tanh`, `lgamma`, `digamma`, `log1p`
 
-These kind of computational graphs have the nice property that for any
-differentiable expression that we can model in software, its partial
-derivative with respect to some node in the graph can be efficiently and
-accurately computed without resorting to numerical finite difference
-methods or slow, potentially difficult to compose symbolic methods.
+Activations: `sigmoid`, `relu`, `softplus`, `logit`
 
-There are many libraries that do this. This library itself is based on
-the excellent work by Karpathy who developed the Python library known as
-[`micrograd`](https://github.com/karpathy/micrograd), which was
-developed for the explicit purpose of teaching the basic concept of AD
-and backpropagation for minimizing loss functions for neural networks.
+Stability: `logsumexp`, `softmax`, `log_safe`, `div_safe`, `exp_safe`, `sigmoid_stable`, `log_sigmoid`
 
-Let’s solve for the MLE iteratively as a demonstration of how to use
-[`femtograd`](https://github.com/queelius/femtograd). First, we
-construct the log-likelihood generator:
+### Hessian Computation
 
-``` r
-loglike_exp <- function(rate, data)
-{
-  return(log(rate)*length(data) - rate * sum(data))
+```r
+f <- function(p) {
+  x <- p[[1]]
+  y <- p[[2]]
+  x^2 + x*y + y^2
 }
+
+H <- hessian(f, list(val(1), val(2)))
+# Returns 2x2 Hessian matrix
 ```
 
-Initially, we guess that $\hat\lambda$ is $1$, which is a terrible
-estimate.
+## Maximum Likelihood Estimation
 
-``` r
-rate <- val(1)
+### Built-in Distributions
+
+```r
+# Normal distribution
+loglik <- function(p) loglik_normal(p[[1]], p[[2]], data)
+
+# Poisson distribution
+loglik <- function(p) loglik_poisson(p[[1]], data)
+
+# Gamma distribution
+loglik <- function(p) loglik_gamma(p[[1]], p[[2]], data)
 ```
 
-Gradient clipping is a technique to prevent taking too large of a step
-when gradients become too large (remember that gradients are a *local*
-feature, so we generally should not use it to take too big of a step)
-during optimization, which can cause instability or overshooting the
-optimal value. By limiting the step size, gradient clipping helps ensure
-that the optimization takes smaller, more stable steps.
+### Optimization Methods
 
-Here is the R code:
+```r
+# Gradient ascent
+result <- gradient_ascent(loglik, params, lr = 0.01, max_iter = 1000)
 
-``` r
-# Takes a gradient `g` and an optional `max_norm` parameter, which defaults
-# to 1. It calculates the gradient's L2 norm (Euclidean norm) and scales the
-# gradient down if its norm exceeds the specified max_norm. This is used during
-# the gradient ascent loop to help ensure stable optimization.
-grad_clip <- function(g, max_norm = 1) {
-  norm <- sqrt(sum(g * g))
-  if (norm > max_norm) {
-    g <- (max_norm / norm) * g
-  }
-  g
-}
+# Newton-Raphson (uses Hessian)
+result <- newton_raphson(loglik, params, max_iter = 50)
+
+# BFGS quasi-Newton
+result <- bfgs(loglik, params, maximize = TRUE)
+
+# L-BFGS (memory efficient)
+result <- lbfgs(loglik, params, m = 10, maximize = TRUE)
+
+# Full MLE with inference
+result <- find_mle(loglik, params, method = "newton")
 ```
 
-We find the MLE using a simple iteration (200 loops).
+### Statistical Inference
 
-``` r
-loglik <- loglike_exp(rate, data)
-lr <- 0.2 # learning rate
-for (i in 1:200)
-{
-  zero_grad(loglik)
-  backward(loglik)
+```r
+result <- find_mle(loglik, params)
 
-  data(rate) <- data(rate) + lr * grad_clip(grad(rate))
-  if (i %% 50 == 0)
-    cat("iteration", i, ", rate =", data(rate), ", drate/dl =", grad(rate), "\n")
-}
-#> iteration 50 , rate = 6.238781 , drate/dl = 0.006148105 
-#> iteration 100 , rate = 6.245533 , drate/dl = 1.447689e-06 
-#> iteration 150 , rate = 6.245535 , drate/dl = 3.418377e-10 
-#> iteration 200 , rate = 6.245535 , drate/dl = 8.082424e-14
+# Standard errors from Fisher information
+result$se
+
+# Variance-covariance matrix
+result$vcov
+
+# Confidence intervals
+confint_mle(result, level = 0.95)
+
+# Wald test
+wald_test(result, null_values = c(0, 1))
 ```
 
-Did the gradient ascent method converge to the MLE?
+## Example: Normal MLE
 
-``` r
-(converged <- (abs(mle.rate - data(rate)) < 1e-3))
-#> [1] TRUE
+```r
+set.seed(123)
+true_mu <- 5
+true_sigma <- 2
+x <- rnorm(100, true_mu, true_sigma)
+
+loglik <- function(p) loglik_normal(p[[1]], p[[2]], x)
+
+# Find MLE
+result <- find_mle(loglik, list(val(mean(x)), val(sd(x))))
+
+cat("MLE mu:", result$estimate[1], "SE:", result$se[1], "\n")
+cat("MLE sigma:", result$estimate[2], "SE:", result$se[2], "\n")
+
+# 95% confidence intervals
+confint_mle(result)
 ```
 
-It’s worth pointing out that we did not update `loglik` in the gradient
-ascent loop, since we only needed the gradient (score) in this case. If,
-however, we had needed to know the log-likelihood for some reason, such
-as when using a line search method to avoid overshooting, we would need
-to update with `loglik <- loglike_exp(rate, data)` each time through the
-loop.
+## Design Philosophy
+
+- **Pedagogy over performance**: Code prioritizes clarity for teaching AD concepts
+- **Statistics focus**: Built for MLE, Hessians, and inference rather than deep learning
+- **Composable foundation**: Designed as a building block for other statistical packages
+
+## Acknowledgments
+
+Inspired by Karpathy's [micrograd](https://github.com/karpathy/micrograd).
+
+## License
+
+GPL-3

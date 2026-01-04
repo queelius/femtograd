@@ -13,6 +13,5 @@ softplus(x)
 A new value object representing softplus(x)
 }
 \description{
-Computes log(1 + exp(x)), a smooth approximation to max(0, x).
-Useful for ensuring positivity of parameters (e.g., variances).
+Element-wise softplus: log(1 + exp(x)).
 }

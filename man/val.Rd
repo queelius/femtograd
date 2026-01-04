@@ -7,14 +7,22 @@
 val(data, label = "")
 }
 \arguments{
-\item{data}{Numeric value of the object}
+\item{data}{Numeric value (scalar, vector, or matrix)}
 
-\item{label}{Optional character label for debugging
-
-Represents a value node in the computational graph with automatic
-differentiation. This constructor function creates a new value object with
-the specified data and optional label.}
+\item{label}{Optional character label for debugging}
+}
+\value{
+A value object
 }
 \description{
-\code{value} object constructor
+Creates a new value node in the computational graph with automatic
+differentiation. Input is converted to matrix representation internally.
+}
+\details{
+All values are stored as matrices internally:
+\itemize{
+\item \code{val(5)} creates a 1x1 matrix
+\item \code{val(c(1,2,3))} creates a 3x1 column vector
+\item \code{val(matrix(...))} preserves matrix dimensions
+}
 }

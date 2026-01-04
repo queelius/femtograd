@@ -4,14 +4,15 @@
 \alias{backward.value}
 \title{Backward pass for value objects}
 \usage{
-\method{backward}{value}(x)
+\method{backward}{value}(x, ...)
 }
 \arguments{
-\item{e}{A value object for which the backward pass should be performed}
+\item{x}{A value object for which the backward pass should be performed}
 
 \item{...}{pass additional arguments}
 }
 \description{
 Performs the backward pass (gradient computation) for a value object in the
-computational graph with automatic differentiation.
+computational graph with automatic differentiation. Initializes the gradient
+of the output node to a matrix of ones (same shape as data).
 }

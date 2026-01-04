@@ -10,8 +10,8 @@
 \item{x}{A value object}
 }
 \value{
-A new value object representing the exponential of x
+A new value object representing exp(x)
 }
 \description{
-Exponential function for value objects
+Element-wise exponential.
 }

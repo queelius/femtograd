@@ -37,7 +37,7 @@ test_that("logsumexp works with value objects", {
   backward(result)
   # d/dx_i logsumexp(x) = exp(x_i) / sum(exp(x)) = softmax(x)_i
   expected_grad <- exp(c(1, 2, 3)) / sum(exp(c(1, 2, 3)))
-  expect_equal(grad(x), expected_grad, tolerance = 1e-10)
+  expect_equal(as.vector(grad(x)), expected_grad, tolerance = 1e-10)
 })
 
 test_that("logsumexp handles edge cases", {
